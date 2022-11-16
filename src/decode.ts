@@ -4,7 +4,6 @@ import {
   Operand,
   InstructionExtra,
   DecodedInstruction,
-  Operation,
   Implied,
   ARIND,
   DR,
@@ -18,6 +17,8 @@ import {
   PackAdjustment,
   ARINC,
   FPAIR,
+  AR,
+  FR,
 } from "./types";
 
 function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
@@ -28,7 +29,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ANDITOCCR,
+      operation: "ANDITOCCR",
       operands: [src, dst],
       extra,
     });
@@ -40,7 +41,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ANDITOSR,
+      operation: "ANDITOSR",
       operands: [src, dst],
       extra,
     });
@@ -52,7 +53,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EORITOCCR,
+      operation: "EORITOCCR",
       operands: [src, dst],
       extra,
     });
@@ -64,7 +65,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EORITOSR,
+      operation: "EORITOSR",
       operands: [src, dst],
       extra,
     });
@@ -76,7 +77,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ORITOCCR,
+      operation: "ORITOCCR",
       operands: [src, dst],
       extra,
     });
@@ -88,7 +89,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ORITOSR,
+      operation: "ORITOSR",
       operands: [src, dst],
       extra,
     });
@@ -98,12 +99,12 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const s = getBits(w0, 6, 1);
     const a = getBits(w0, 0, 3);
     const size = 1 << (s + 1);
-    const src: Operand = ARIND(cs.addressReg(a));
-    const dst = cs.dataRegOp(d);
+    const src = ARIND(a);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEP,
+      operation: "MOVEP",
       operands: [src, dst],
       extra,
     });
@@ -113,12 +114,12 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const s = getBits(w0, 6, 1);
     const a = getBits(w0, 0, 3);
     const size = 1 << (s + 1);
-    const src: Operand = DR(cs.dataReg(d));
-    const dst: Operand = ARIND(cs.addressReg(a));
+    const src = DR(d);
+    const dst = ARIND(a);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEP,
+      operation: "MOVEP",
       operands: [src, dst],
       extra,
     });
@@ -128,12 +129,12 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, 4);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BTST,
+      operation: "BTST",
       operands: [src, dst],
       extra,
     });
@@ -143,12 +144,12 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, 4);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BCHG,
+      operation: "BCHG",
       operands: [src, dst],
       extra,
     });
@@ -158,12 +159,12 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, 4);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BCLR,
+      operation: "BCLR",
       operands: [src, dst],
       extra,
     });
@@ -173,12 +174,12 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, 4);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BSET,
+      operation: "BSET",
       operands: [src, dst],
       extra,
     });
@@ -196,7 +197,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.BTST,
+        operation: "BTST",
         operands: [src, dst],
         extra,
       });
@@ -215,7 +216,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.BCHG,
+        operation: "BCHG",
         operands: [src, dst],
         extra,
       });
@@ -234,7 +235,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.BCLR,
+        operation: "BCLR",
         operands: [src, dst],
         extra,
       });
@@ -253,7 +254,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.BSET,
+        operation: "BSET",
         operands: [src, dst],
         extra,
       });
@@ -268,7 +269,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.RTM,
+      operation: "RTM",
       operands: [src, dst],
       extra,
     });
@@ -282,7 +283,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CALLM,
+      operation: "CALLM",
       operands: [src, dst],
       extra,
     });
@@ -296,7 +297,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDI,
+      operation: "ADDI",
       operands: [src, dst],
       extra,
     });
@@ -310,7 +311,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDI,
+      operation: "ADDI",
       operands: [src, dst],
       extra,
     });
@@ -324,7 +325,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDI,
+      operation: "ADDI",
       operands: [src, dst],
       extra,
     });
@@ -338,7 +339,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBI,
+      operation: "SUBI",
       operands: [src, dst],
       extra,
     });
@@ -352,7 +353,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBI,
+      operation: "SUBI",
       operands: [src, dst],
       extra,
     });
@@ -366,7 +367,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBI,
+      operation: "SUBI",
       operands: [src, dst],
       extra,
     });
@@ -380,7 +381,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ANDI,
+      operation: "ANDI",
       operands: [src, dst],
       extra,
     });
@@ -394,7 +395,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ANDI,
+      operation: "ANDI",
       operands: [src, dst],
       extra,
     });
@@ -408,7 +409,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ANDI,
+      operation: "ANDI",
       operands: [src, dst],
       extra,
     });
@@ -422,7 +423,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ORI,
+      operation: "ORI",
       operands: [src, dst],
       extra,
     });
@@ -436,7 +437,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ORI,
+      operation: "ORI",
       operands: [src, dst],
       extra,
     });
@@ -450,7 +451,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ORI,
+      operation: "ORI",
       operands: [src, dst],
       extra,
     });
@@ -470,7 +471,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.CMP2,
+        operation: "CMP2",
         operands: [src, dst],
         extra,
       });
@@ -491,7 +492,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.CHK2,
+        operation: "CHK2",
         operands: [src, dst],
         extra,
       });
@@ -506,7 +507,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EORI,
+      operation: "EORI",
       operands: [src, dst],
       extra,
     });
@@ -520,7 +521,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EORI,
+      operation: "EORI",
       operands: [src, dst],
       extra,
     });
@@ -534,7 +535,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EORI,
+      operation: "EORI",
       operands: [src, dst],
       extra,
     });
@@ -548,7 +549,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMPI,
+      operation: "CMPI",
       operands: [src, dst],
       extra,
     });
@@ -562,7 +563,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMPI,
+      operation: "CMPI",
       operands: [src, dst],
       extra,
     });
@@ -576,7 +577,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMPI,
+      operation: "CMPI",
       operands: [src, dst],
       extra,
     });
@@ -595,7 +596,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MOVES,
+        operation: "MOVES",
         operands: [src, dst],
         extra,
       });
@@ -615,7 +616,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MOVES,
+        operation: "MOVES",
         operands: [src, dst],
         extra,
       });
@@ -635,7 +636,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MOVES,
+        operation: "MOVES",
         operands: [src, dst],
         extra,
       });
@@ -655,7 +656,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MOVES,
+        operation: "MOVES",
         operands: [src, dst],
         extra,
       });
@@ -675,7 +676,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MOVES,
+        operation: "MOVES",
         operands: [src, dst],
         extra,
       });
@@ -695,7 +696,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MOVES,
+        operation: "MOVES",
         operands: [src, dst],
         extra,
       });
@@ -710,7 +711,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.RTM,
+      operation: "RTM",
       operands: [src, dst],
       extra,
     });
@@ -730,7 +731,7 @@ function decodeGroup0001(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVE,
+      operation: "MOVE",
       operands: [src, dst],
       extra,
     });
@@ -749,7 +750,7 @@ function decodeGroup0010(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEA,
+      operation: "MOVEA",
       operands: [src, dst],
       extra,
     });
@@ -765,7 +766,7 @@ function decodeGroup0010(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVE,
+      operation: "MOVE",
       operands: [src, dst],
       extra,
     });
@@ -784,7 +785,7 @@ function decodeGroup0011(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEA,
+      operation: "MOVEA",
       operands: [src, dst],
       extra,
     });
@@ -800,7 +801,7 @@ function decodeGroup0011(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVE,
+      operation: "MOVE",
       operands: [src, dst],
       extra,
     });
@@ -816,7 +817,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BGND,
+      operation: "BGND",
       operands: [src, dst],
       extra,
     });
@@ -828,7 +829,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ILLEGAL,
+      operation: "ILLEGAL",
       operands: [src, dst],
       extra,
     });
@@ -840,7 +841,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NOP,
+      operation: "NOP",
       operands: [src, dst],
       extra,
     });
@@ -852,7 +853,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.RESET,
+      operation: "RESET",
       operands: [src, dst],
       extra,
     });
@@ -864,7 +865,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.RTD,
+      operation: "RTD",
       operands: [src, dst],
       extra,
     });
@@ -876,7 +877,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.RTE,
+      operation: "RTE",
       operands: [src, dst],
       extra,
     });
@@ -888,7 +889,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.RTR,
+      operation: "RTR",
       operands: [src, dst],
       extra,
     });
@@ -900,7 +901,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.RTS,
+      operation: "RTS",
       operands: [src, dst],
       extra,
     });
@@ -912,7 +913,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.STOP,
+      operation: "STOP",
       operands: [src, dst],
       extra,
     });
@@ -924,7 +925,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.TRAPV,
+      operation: "TRAPV",
       operands: [src, dst],
       extra,
     });
@@ -942,7 +943,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MOVEC,
+        operation: "MOVEC",
         operands: [src, dst],
         extra,
       });
@@ -961,7 +962,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MOVEC,
+        operation: "MOVEC",
         operands: [src, dst],
         extra,
       });
@@ -970,12 +971,12 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
   if ((w0 & 0b1111111111111000) === 0b0100100001000000) {
     const r = getBits(w0, 0, 3);
     const size = 0;
-    const src = cs.dataRegOp(r);
+    const src = DR(r);
     const dst: Operand | null = null;
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SWAP,
+      operation: "SWAP",
       operands: [src, dst],
       extra,
     });
@@ -988,7 +989,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BKPT,
+      operation: "BKPT",
       operands: [src, dst],
       extra,
     });
@@ -996,12 +997,12 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
   if ((w0 & 0b1111111111111000) === 0b0100100010000000) {
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(r);
+    const src = DR(r);
     const dst: Operand | null = null;
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EXTW,
+      operation: "EXTW",
       operands: [src, dst],
       extra,
     });
@@ -1009,12 +1010,12 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
   if ((w0 & 0b1111111111111000) === 0b0100100011000000) {
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(r);
+    const src = DR(r);
     const dst: Operand | null = null;
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EXTL,
+      operation: "EXTL",
       operands: [src, dst],
       extra,
     });
@@ -1022,12 +1023,12 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
   if ((w0 & 0b1111111111111000) === 0b0100100111000000) {
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(r);
+    const src = DR(r);
     const dst: Operand | null = null;
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EXTBL,
+      operation: "EXTBL",
       operands: [src, dst],
       extra,
     });
@@ -1038,11 +1039,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, 4);
-    const dst = cs.addressRegOp(n);
+    const dst = AR(n);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LEA,
+      operation: "LEA",
       operands: [src, dst],
       extra,
     });
@@ -1050,12 +1051,12 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
   if ((w0 & 0b1111111111111000) === 0b0100111001010000) {
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.addressRegOp(r);
+    const src = AR(r);
     const dst = cs.imm16();
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LINK,
+      operation: "LINK",
       operands: [src, dst],
       extra,
     });
@@ -1063,12 +1064,12 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
   if ((w0 & 0b1111111111111000) === 0b0100100000001000) {
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.addressRegOp(r);
+    const src = AR(r);
     const dst = cs.imm32();
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LINK,
+      operation: "LINK",
       operands: [src, dst],
       extra,
     });
@@ -1076,12 +1077,12 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
   if ((w0 & 0b1111111111111000) === 0b0100111001011000) {
     const r = getBits(w0, 0, 3);
     const size = 0;
-    const src = cs.addressRegOp(r);
+    const src = AR(r);
     const dst: Operand | null = null;
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.UNLK,
+      operation: "UNLK",
       operands: [src, dst],
       extra,
     });
@@ -1094,7 +1095,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.TRAP,
+      operation: "TRAP",
       operands: [src, dst],
       extra,
     });
@@ -1110,11 +1111,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
         cs.skipWords(1);
         const size = 4;
         const src = cs.ea(r, m, 4);
-        const dst = DPAIR(cs.dataReg(q), cs.dataReg(R));
+        const dst = DPAIR(q, R);
         const extra: InstructionExtra | null = null;
         return cs.checkOverflow({
           size,
-          operation: Operation.DIVSL,
+          operation: "DIVSL",
           operands: [src, dst],
           extra,
         });
@@ -1131,11 +1132,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const size = 4;
       const src = cs.ea(r, m, 4);
-      const dst = DPAIR(cs.dataReg(q), cs.dataReg(R));
+      const dst = DPAIR(q, R);
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.DIVSL,
+        operation: "DIVSL",
         operands: [src, dst],
         extra,
       });
@@ -1152,11 +1153,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
         cs.skipWords(1);
         const size = 4;
         const src = cs.ea(r, m, 4);
-        const dst = DPAIR(cs.dataReg(q), cs.dataReg(R));
+        const dst = DPAIR(q, R);
         const extra: InstructionExtra | null = null;
         return cs.checkOverflow({
           size,
-          operation: Operation.DIVSLL,
+          operation: "DIVSLL",
           operands: [src, dst],
           extra,
         });
@@ -1172,11 +1173,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const size = 4;
       const src = cs.ea(r, m, 4);
-      const dst = cs.dataRegOp(q);
+      const dst = DR(q);
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.DIVSL,
+        operation: "DIVSL",
         operands: [src, dst],
         extra,
       });
@@ -1193,11 +1194,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
         cs.skipWords(1);
         const size = 4;
         const src = cs.ea(r, m, 4);
-        const dst = DPAIR(cs.dataReg(q), cs.dataReg(R));
+        const dst = DPAIR(q, R);
         const extra: InstructionExtra | null = null;
         return cs.checkOverflow({
           size,
-          operation: Operation.DIVUL,
+          operation: "DIVUL",
           operands: [src, dst],
           extra,
         });
@@ -1214,11 +1215,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const size = 4;
       const src = cs.ea(r, m, 4);
-      const dst = DPAIR(cs.dataReg(q), cs.dataReg(R));
+      const dst = DPAIR(q, R);
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.DIVUL,
+        operation: "DIVUL",
         operands: [src, dst],
         extra,
       });
@@ -1235,11 +1236,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
         cs.skipWords(1);
         const size = 4;
         const src = cs.ea(r, m, 4);
-        const dst = DPAIR(cs.dataReg(q), cs.dataReg(R));
+        const dst = DPAIR(q, R);
         const extra: InstructionExtra | null = null;
         return cs.checkOverflow({
           size,
-          operation: Operation.DIVULL,
+          operation: "DIVULL",
           operands: [src, dst],
           extra,
         });
@@ -1255,11 +1256,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const size = 4;
       const src = cs.ea(r, m, 4);
-      const dst = cs.dataRegOp(q);
+      const dst = DR(q);
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.DIVUL,
+        operation: "DIVUL",
         operands: [src, dst],
         extra,
       });
@@ -1274,7 +1275,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.JMP,
+      operation: "JMP",
       operands: [src, dst],
       extra,
     });
@@ -1288,7 +1289,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.JSR,
+      operation: "JSR",
       operands: [src, dst],
       extra,
     });
@@ -1302,11 +1303,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const size = 4;
       const src = cs.ea(r, m, 4);
-      const dst = cs.dataRegOp(l);
+      const dst = DR(l);
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MULS,
+        operation: "MULS",
         operands: [src, dst],
         extra,
       });
@@ -1322,11 +1323,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const size = 4;
       const src = cs.ea(r, m, 4);
-      const dst = DPAIR(cs.dataReg(l), cs.dataReg(h));
+      const dst = DPAIR(l, h);
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MULS,
+        operation: "MULS",
         operands: [src, dst],
         extra,
       });
@@ -1341,11 +1342,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const size = 4;
       const src = cs.ea(r, m, 4);
-      const dst = cs.dataRegOp(l);
+      const dst = DR(l);
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MULU,
+        operation: "MULU",
         operands: [src, dst],
         extra,
       });
@@ -1361,11 +1362,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const size = 4;
       const src = cs.ea(r, m, 4);
-      const dst = DPAIR(cs.dataReg(l), cs.dataReg(h));
+      const dst = DPAIR(l, h);
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.MULU,
+        operation: "MULU",
         operands: [src, dst],
         extra,
       });
@@ -1380,7 +1381,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NBCD,
+      operation: "NBCD",
       operands: [src, dst],
       extra,
     });
@@ -1394,7 +1395,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEFROMSR,
+      operation: "MOVEFROMSR",
       operands: [src, dst],
       extra,
     });
@@ -1408,7 +1409,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVETOSR,
+      operation: "MOVETOSR",
       operands: [src, dst],
       extra,
     });
@@ -1416,12 +1417,12 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
   if ((w0 & 0b1111111111111000) === 0b0100111001100000) {
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.addressRegOp(r);
+    const src = AR(r);
     const dst = Implied();
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVETOUSP,
+      operation: "MOVETOUSP",
       operands: [src, dst],
       extra,
     });
@@ -1430,11 +1431,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = Implied();
-    const dst = cs.addressRegOp(r);
+    const dst = AR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEFROMUSP,
+      operation: "MOVEFROMUSP",
       operands: [src, dst],
       extra,
     });
@@ -1448,7 +1449,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEFROMCCR,
+      operation: "MOVEFROMCCR",
       operands: [src, dst],
       extra,
     });
@@ -1462,7 +1463,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVETOCCR,
+      operation: "MOVETOCCR",
       operands: [src, dst],
       extra,
     });
@@ -1476,7 +1477,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.PEA,
+      operation: "PEA",
       operands: [src, dst],
       extra,
     });
@@ -1490,7 +1491,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.TAS,
+      operation: "TAS",
       operands: [src, dst],
       extra,
     });
@@ -1505,7 +1506,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEM,
+      operation: "MOVEM",
       operands: [src, dst],
       extra,
     });
@@ -1520,7 +1521,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEM,
+      operation: "MOVEM",
       operands: [src, dst],
       extra,
     });
@@ -1534,7 +1535,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CLR,
+      operation: "CLR",
       operands: [src, dst],
       extra,
     });
@@ -1548,7 +1549,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CLR,
+      operation: "CLR",
       operands: [src, dst],
       extra,
     });
@@ -1562,7 +1563,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CLR,
+      operation: "CLR",
       operands: [src, dst],
       extra,
     });
@@ -1576,7 +1577,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NEG,
+      operation: "NEG",
       operands: [src, dst],
       extra,
     });
@@ -1590,7 +1591,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NEG,
+      operation: "NEG",
       operands: [src, dst],
       extra,
     });
@@ -1604,7 +1605,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NEG,
+      operation: "NEG",
       operands: [src, dst],
       extra,
     });
@@ -1618,7 +1619,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NEGX,
+      operation: "NEGX",
       operands: [src, dst],
       extra,
     });
@@ -1632,7 +1633,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NEGX,
+      operation: "NEGX",
       operands: [src, dst],
       extra,
     });
@@ -1646,7 +1647,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NEGX,
+      operation: "NEGX",
       operands: [src, dst],
       extra,
     });
@@ -1660,7 +1661,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NOT,
+      operation: "NOT",
       operands: [src, dst],
       extra,
     });
@@ -1674,7 +1675,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NOT,
+      operation: "NOT",
       operands: [src, dst],
       extra,
     });
@@ -1688,7 +1689,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.NOT,
+      operation: "NOT",
       operands: [src, dst],
       extra,
     });
@@ -1702,7 +1703,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.TST,
+      operation: "TST",
       operands: [src, dst],
       extra,
     });
@@ -1716,7 +1717,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.TST,
+      operation: "TST",
       operands: [src, dst],
       extra,
     });
@@ -1730,7 +1731,7 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.TST,
+      operation: "TST",
       operands: [src, dst],
       extra,
     });
@@ -1741,11 +1742,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CHK,
+      operation: "CHK",
       operands: [src, dst],
       extra,
     });
@@ -1756,11 +1757,11 @@ function decodeGroup0100(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CHK,
+      operation: "CHK",
       operands: [src, dst],
       extra,
     });
@@ -1773,12 +1774,12 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 8, 4);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(r);
+    const src = DR(r);
     const dst = PCDISP(2, simpleDisp(i16(cs.pull16())));
     const extra: InstructionExtra | null = cs.cc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.DBCC,
+      operation: "DBCC",
       operands: [src, dst],
       extra,
     });
@@ -1793,7 +1794,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDQ,
+      operation: "ADDQ",
       operands: [src, dst],
       extra,
     });
@@ -1808,7 +1809,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDQ,
+      operation: "ADDQ",
       operands: [src, dst],
       extra,
     });
@@ -1823,7 +1824,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDQ,
+      operation: "ADDQ",
       operands: [src, dst],
       extra,
     });
@@ -1838,7 +1839,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBQ,
+      operation: "SUBQ",
       operands: [src, dst],
       extra,
     });
@@ -1853,7 +1854,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBQ,
+      operation: "SUBQ",
       operands: [src, dst],
       extra,
     });
@@ -1868,7 +1869,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBQ,
+      operation: "SUBQ",
       operands: [src, dst],
       extra,
     });
@@ -1881,7 +1882,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = cs.cc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.TRAPCC,
+      operation: "TRAPCC",
       operands: [src, dst],
       extra,
     });
@@ -1894,7 +1895,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = cs.cc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.TRAPCC,
+      operation: "TRAPCC",
       operands: [src, dst],
       extra,
     });
@@ -1907,7 +1908,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = cs.cc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.TRAPCC,
+      operation: "TRAPCC",
       operands: [src, dst],
       extra,
     });
@@ -1922,7 +1923,7 @@ function decodeGroup0101(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = cs.cc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.SCC,
+      operation: "SCC",
       operands: [src, dst],
       extra,
     });
@@ -1938,7 +1939,7 @@ function decodeGroup0110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BRA,
+      operation: "BRA",
       operands: [src, dst],
       extra,
     });
@@ -1950,7 +1951,7 @@ function decodeGroup0110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BRA,
+      operation: "BRA",
       operands: [src, dst],
       extra,
     });
@@ -1963,7 +1964,7 @@ function decodeGroup0110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BRA,
+      operation: "BRA",
       operands: [src, dst],
       extra,
     });
@@ -1975,7 +1976,7 @@ function decodeGroup0110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BSR,
+      operation: "BSR",
       operands: [src, dst],
       extra,
     });
@@ -1987,7 +1988,7 @@ function decodeGroup0110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BSR,
+      operation: "BSR",
       operands: [src, dst],
       extra,
     });
@@ -2000,7 +2001,7 @@ function decodeGroup0110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.BSR,
+      operation: "BSR",
       operands: [src, dst],
       extra,
     });
@@ -2013,7 +2014,7 @@ function decodeGroup0110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = cs.cc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.BCC,
+      operation: "BCC",
       operands: [src, dst],
       extra,
     });
@@ -2026,7 +2027,7 @@ function decodeGroup0110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = cs.cc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.BCC,
+      operation: "BCC",
       operands: [src, dst],
       extra,
     });
@@ -2040,7 +2041,7 @@ function decodeGroup0110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = cs.cc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.BCC,
+      operation: "BCC",
       operands: [src, dst],
       extra,
     });
@@ -2054,11 +2055,11 @@ function decodeGroup0111(w0: number, cs: CodeStream): DecodedInstruction {
     const n = getBits(w0, 0, 8);
     const size = 4;
     const src = IMM8(n);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MOVEQ,
+      operation: "MOVEQ",
       operands: [src, dst],
       extra,
     });
@@ -2071,12 +2072,12 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const y = getBits(w0, 9, 3);
     const x = getBits(w0, 0, 3);
     const size = 0;
-    const src = cs.dataRegOp(x);
-    const dst = cs.dataRegOp(y);
+    const src = DR(x);
+    const dst = DR(y);
     const extra = PackAdjustment(cs.pull16());
     return cs.checkOverflow({
       size,
-      operation: Operation.PACK,
+      operation: "PACK",
       operands: [src, dst],
       extra,
     });
@@ -2085,12 +2086,12 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const y = getBits(w0, 9, 3);
     const x = getBits(w0, 0, 3);
     const size = 0;
-    const src = ARDEC(cs.addressReg(x));
-    const dst = ARDEC(cs.addressReg(y));
+    const src = ARDEC(x);
+    const dst = ARDEC(y);
     const extra = PackAdjustment(cs.pull16());
     return cs.checkOverflow({
       size,
-      operation: Operation.PACK,
+      operation: "PACK",
       operands: [src, dst],
       extra,
     });
@@ -2099,12 +2100,12 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const y = getBits(w0, 9, 3);
     const x = getBits(w0, 0, 3);
     const size = 0;
-    const src = cs.dataRegOp(x);
-    const dst = cs.dataRegOp(y);
+    const src = DR(x);
+    const dst = DR(y);
     const extra = PackAdjustment(cs.pull16());
     return cs.checkOverflow({
       size,
-      operation: Operation.UNPK,
+      operation: "UNPK",
       operands: [src, dst],
       extra,
     });
@@ -2113,12 +2114,12 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const y = getBits(w0, 9, 3);
     const x = getBits(w0, 0, 3);
     const size = 0;
-    const src = ARDEC(cs.addressReg(x));
-    const dst = ARDEC(cs.addressReg(y));
+    const src = ARDEC(x);
+    const dst = ARDEC(y);
     const extra = PackAdjustment(cs.pull16());
     return cs.checkOverflow({
       size,
-      operation: Operation.UNPK,
+      operation: "UNPK",
       operands: [src, dst],
       extra,
     });
@@ -2127,12 +2128,12 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const y = getBits(w0, 9, 3);
     const x = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(x);
-    const dst = cs.dataRegOp(y);
+    const src = DR(x);
+    const dst = DR(y);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SBCD,
+      operation: "SBCD",
       operands: [src, dst],
       extra,
     });
@@ -2141,12 +2142,12 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const y = getBits(w0, 9, 3);
     const x = getBits(w0, 0, 3);
     const size = 1;
-    const src = ARDEC(cs.addressReg(x));
-    const dst = ARDEC(cs.addressReg(y));
+    const src = ARDEC(x);
+    const dst = ARDEC(y);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SBCD,
+      operation: "SBCD",
       operands: [src, dst],
       extra,
     });
@@ -2157,11 +2158,11 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, 2);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.DIVS,
+      operation: "DIVS",
       operands: [src, dst],
       extra,
     });
@@ -2172,11 +2173,11 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, 2);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.DIVU,
+      operation: "DIVU",
       operands: [src, dst],
       extra,
     });
@@ -2187,11 +2188,11 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.OR,
+      operation: "OR",
       operands: [src, dst],
       extra,
     });
@@ -2202,11 +2203,11 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.OR,
+      operation: "OR",
       operands: [src, dst],
       extra,
     });
@@ -2217,11 +2218,11 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.OR,
+      operation: "OR",
       operands: [src, dst],
       extra,
     });
@@ -2231,12 +2232,12 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.OR,
+      operation: "OR",
       operands: [src, dst],
       extra,
     });
@@ -2246,12 +2247,12 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.OR,
+      operation: "OR",
       operands: [src, dst],
       extra,
     });
@@ -2261,12 +2262,12 @@ function decodeGroup1000(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.OR,
+      operation: "OR",
       operands: [src, dst],
       extra,
     });
@@ -2279,12 +2280,12 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(y);
-    const dst = cs.dataRegOp(x);
+    const src = DR(y);
+    const dst = DR(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBX,
+      operation: "SUBX",
       operands: [src, dst],
       extra,
     });
@@ -2293,12 +2294,12 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(y);
-    const dst = cs.dataRegOp(x);
+    const src = DR(y);
+    const dst = DR(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBX,
+      operation: "SUBX",
       operands: [src, dst],
       extra,
     });
@@ -2307,12 +2308,12 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(y);
-    const dst = cs.dataRegOp(x);
+    const src = DR(y);
+    const dst = DR(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBX,
+      operation: "SUBX",
       operands: [src, dst],
       extra,
     });
@@ -2321,12 +2322,12 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 1;
-    const src = ARDEC(cs.addressReg(y));
-    const dst = ARDEC(cs.addressReg(x));
+    const src = ARDEC(y);
+    const dst = ARDEC(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBX,
+      operation: "SUBX",
       operands: [src, dst],
       extra,
     });
@@ -2335,12 +2336,12 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 2;
-    const src = ARDEC(cs.addressReg(y));
-    const dst = ARDEC(cs.addressReg(x));
+    const src = ARDEC(y);
+    const dst = ARDEC(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBX,
+      operation: "SUBX",
       operands: [src, dst],
       extra,
     });
@@ -2349,12 +2350,12 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 4;
-    const src = ARDEC(cs.addressReg(y));
-    const dst = ARDEC(cs.addressReg(x));
+    const src = ARDEC(y);
+    const dst = ARDEC(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBX,
+      operation: "SUBX",
       operands: [src, dst],
       extra,
     });
@@ -2365,11 +2366,11 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUB,
+      operation: "SUB",
       operands: [src, dst],
       extra,
     });
@@ -2380,11 +2381,11 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUB,
+      operation: "SUB",
       operands: [src, dst],
       extra,
     });
@@ -2395,11 +2396,11 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUB,
+      operation: "SUB",
       operands: [src, dst],
       extra,
     });
@@ -2409,12 +2410,12 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUB,
+      operation: "SUB",
       operands: [src, dst],
       extra,
     });
@@ -2424,12 +2425,12 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUB,
+      operation: "SUB",
       operands: [src, dst],
       extra,
     });
@@ -2439,12 +2440,12 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUB,
+      operation: "SUB",
       operands: [src, dst],
       extra,
     });
@@ -2455,11 +2456,11 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, size);
-    const dst = cs.addressRegOp(d);
+    const dst = AR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBA,
+      operation: "SUBA",
       operands: [src, dst],
       extra,
     });
@@ -2470,11 +2471,11 @@ function decodeGroup1001(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, size);
-    const dst = cs.addressRegOp(d);
+    const dst = AR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.SUBA,
+      operation: "SUBA",
       operands: [src, dst],
       extra,
     });
@@ -2489,11 +2490,11 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, size);
-    const dst = cs.addressRegOp(a);
+    const dst = AR(a);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMPA,
+      operation: "CMPA",
       operands: [src, dst],
       extra,
     });
@@ -2504,11 +2505,11 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, size);
-    const dst = cs.addressRegOp(a);
+    const dst = AR(a);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMPA,
+      operation: "CMPA",
       operands: [src, dst],
       extra,
     });
@@ -2517,12 +2518,12 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 1;
-    const src = ARINC(cs.addressReg(y));
-    const dst = ARINC(cs.addressReg(x));
+    const src = ARINC(y);
+    const dst = ARINC(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMPM,
+      operation: "CMPM",
       operands: [src, dst],
       extra,
     });
@@ -2531,12 +2532,12 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 2;
-    const src = ARINC(cs.addressReg(y));
-    const dst = ARINC(cs.addressReg(x));
+    const src = ARINC(y);
+    const dst = ARINC(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMPM,
+      operation: "CMPM",
       operands: [src, dst],
       extra,
     });
@@ -2545,12 +2546,12 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 4;
-    const src = ARINC(cs.addressReg(y));
-    const dst = ARINC(cs.addressReg(x));
+    const src = ARINC(y);
+    const dst = ARINC(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMPM,
+      operation: "CMPM",
       operands: [src, dst],
       extra,
     });
@@ -2561,11 +2562,11 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMP,
+      operation: "CMP",
       operands: [src, dst],
       extra,
     });
@@ -2576,11 +2577,11 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMP,
+      operation: "CMP",
       operands: [src, dst],
       extra,
     });
@@ -2591,11 +2592,11 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.CMP,
+      operation: "CMP",
       operands: [src, dst],
       extra,
     });
@@ -2605,12 +2606,12 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EOR,
+      operation: "EOR",
       operands: [src, dst],
       extra,
     });
@@ -2620,12 +2621,12 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EOR,
+      operation: "EOR",
       operands: [src, dst],
       extra,
     });
@@ -2635,12 +2636,12 @@ function decodeGroup1011(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EOR,
+      operation: "EOR",
       operands: [src, dst],
       extra,
     });
@@ -2653,12 +2654,12 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const y = getBits(w0, 9, 3);
     const x = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(x);
-    const dst = cs.dataRegOp(y);
+    const src = DR(x);
+    const dst = DR(y);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ABCD,
+      operation: "ABCD",
       operands: [src, dst],
       extra,
     });
@@ -2667,12 +2668,12 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const y = getBits(w0, 9, 3);
     const x = getBits(w0, 0, 3);
     const size = 1;
-    const src = ARDEC(cs.addressReg(x));
-    const dst = ARDEC(cs.addressReg(y));
+    const src = ARDEC(x);
+    const dst = ARDEC(y);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ABCD,
+      operation: "ABCD",
       operands: [src, dst],
       extra,
     });
@@ -2683,11 +2684,11 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, 2);
-    const dst = cs.dataRegOp(p);
+    const dst = DR(p);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MULU,
+      operation: "MULU",
       operands: [src, dst],
       extra,
     });
@@ -2698,11 +2699,11 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, 2);
-    const dst = cs.dataRegOp(p);
+    const dst = DR(p);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.MULS,
+      operation: "MULS",
       operands: [src, dst],
       extra,
     });
@@ -2711,12 +2712,12 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(x);
-    const dst = cs.dataRegOp(y);
+    const src = DR(x);
+    const dst = DR(y);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EXG,
+      operation: "EXG",
       operands: [src, dst],
       extra,
     });
@@ -2725,12 +2726,12 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.addressRegOp(x);
-    const dst = cs.addressRegOp(y);
+    const src = AR(x);
+    const dst = AR(y);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EXG,
+      operation: "EXG",
       operands: [src, dst],
       extra,
     });
@@ -2739,12 +2740,12 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(x);
-    const dst = cs.addressRegOp(y);
+    const src = DR(x);
+    const dst = AR(y);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.EXG,
+      operation: "EXG",
       operands: [src, dst],
       extra,
     });
@@ -2755,11 +2756,11 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.AND,
+      operation: "AND",
       operands: [src, dst],
       extra,
     });
@@ -2770,11 +2771,11 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.AND,
+      operation: "AND",
       operands: [src, dst],
       extra,
     });
@@ -2785,11 +2786,11 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.AND,
+      operation: "AND",
       operands: [src, dst],
       extra,
     });
@@ -2799,12 +2800,12 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.AND,
+      operation: "AND",
       operands: [src, dst],
       extra,
     });
@@ -2814,12 +2815,12 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.AND,
+      operation: "AND",
       operands: [src, dst],
       extra,
     });
@@ -2829,12 +2830,12 @@ function decodeGroup1100(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.AND,
+      operation: "AND",
       operands: [src, dst],
       extra,
     });
@@ -2847,12 +2848,12 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(y);
-    const dst = cs.dataRegOp(x);
+    const src = DR(y);
+    const dst = DR(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDX,
+      operation: "ADDX",
       operands: [src, dst],
       extra,
     });
@@ -2861,12 +2862,12 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(y);
-    const dst = cs.dataRegOp(x);
+    const src = DR(y);
+    const dst = DR(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDX,
+      operation: "ADDX",
       operands: [src, dst],
       extra,
     });
@@ -2875,12 +2876,12 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(y);
-    const dst = cs.dataRegOp(x);
+    const src = DR(y);
+    const dst = DR(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDX,
+      operation: "ADDX",
       operands: [src, dst],
       extra,
     });
@@ -2889,12 +2890,12 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 1;
-    const src = ARDEC(cs.addressReg(y));
-    const dst = ARDEC(cs.addressReg(x));
+    const src = ARDEC(y);
+    const dst = ARDEC(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDX,
+      operation: "ADDX",
       operands: [src, dst],
       extra,
     });
@@ -2903,12 +2904,12 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 2;
-    const src = ARDEC(cs.addressReg(y));
-    const dst = ARDEC(cs.addressReg(x));
+    const src = ARDEC(y);
+    const dst = ARDEC(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDX,
+      operation: "ADDX",
       operands: [src, dst],
       extra,
     });
@@ -2917,12 +2918,12 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const x = getBits(w0, 9, 3);
     const y = getBits(w0, 0, 3);
     const size = 4;
-    const src = ARDEC(cs.addressReg(y));
-    const dst = ARDEC(cs.addressReg(x));
+    const src = ARDEC(y);
+    const dst = ARDEC(x);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDX,
+      operation: "ADDX",
       operands: [src, dst],
       extra,
     });
@@ -2933,11 +2934,11 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADD,
+      operation: "ADD",
       operands: [src, dst],
       extra,
     });
@@ -2948,11 +2949,11 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADD,
+      operation: "ADD",
       operands: [src, dst],
       extra,
     });
@@ -2963,11 +2964,11 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, size);
-    const dst = cs.dataRegOp(d);
+    const dst = DR(d);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADD,
+      operation: "ADD",
       operands: [src, dst],
       extra,
     });
@@ -2977,12 +2978,12 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADD,
+      operation: "ADD",
       operands: [src, dst],
       extra,
     });
@@ -2992,12 +2993,12 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADD,
+      operation: "ADD",
       operands: [src, dst],
       extra,
     });
@@ -3007,12 +3008,12 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(d);
+    const src = DR(d);
     const dst = cs.ea(r, m, size);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADD,
+      operation: "ADD",
       operands: [src, dst],
       extra,
     });
@@ -3023,11 +3024,11 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = cs.ea(r, m, size);
-    const dst = cs.addressRegOp(a);
+    const dst = AR(a);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDA,
+      operation: "ADDA",
       operands: [src, dst],
       extra,
     });
@@ -3038,11 +3039,11 @@ function decodeGroup1101(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = cs.ea(r, m, size);
-    const dst = cs.addressRegOp(a);
+    const dst = AR(a);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ADDA,
+      operation: "ADDA",
       operands: [src, dst],
       extra,
     });
@@ -3067,7 +3068,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
       const dst = cs.ea(r, m, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.BFCHG,
+        operation: "BFCHG",
         operands: [src, dst],
         extra,
       });
@@ -3089,7 +3090,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
       const dst = cs.ea(r, m, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.BFCLR,
+        operation: "BFCLR",
         operands: [src, dst],
         extra,
       });
@@ -3109,10 +3110,10 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = cs.bitfield(O, o, W, w);
       const size = 0;
       const src = cs.ea(r, m, 0);
-      const dst = cs.dataRegOp(d);
+      const dst = DR(d);
       return cs.checkOverflow({
         size,
-        operation: Operation.BFEXTS,
+        operation: "BFEXTS",
         operands: [src, dst],
         extra,
       });
@@ -3132,10 +3133,10 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = cs.bitfield(O, o, W, w);
       const size = 0;
       const src = cs.ea(r, m, 0);
-      const dst = cs.dataRegOp(d);
+      const dst = DR(d);
       return cs.checkOverflow({
         size,
-        operation: Operation.BFEXTU,
+        operation: "BFEXTU",
         operands: [src, dst],
         extra,
       });
@@ -3155,10 +3156,10 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = cs.bitfield(O, o, W, w);
       const size = 0;
       const src = cs.ea(r, m, 0);
-      const dst = cs.dataRegOp(d);
+      const dst = DR(d);
       return cs.checkOverflow({
         size,
-        operation: Operation.BFFFO,
+        operation: "BFFFO",
         operands: [src, dst],
         extra,
       });
@@ -3177,11 +3178,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const extra: InstructionExtra | null = cs.bitfield(O, o, W, w);
       const size = 0;
-      const src = cs.dataRegOp(d);
+      const src = DR(d);
       const dst = cs.ea(r, m, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.BFINS,
+        operation: "BFINS",
         operands: [src, dst],
         extra,
       });
@@ -3203,7 +3204,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
       const dst = cs.ea(r, m, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.BFSET,
+        operation: "BFSET",
         operands: [src, dst],
         extra,
       });
@@ -3225,7 +3226,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
       const dst = cs.ea(r, m, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.BFTST,
+        operation: "BFTST",
         operands: [src, dst],
         extra,
       });
@@ -3236,11 +3237,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASL,
+      operation: "ASL",
       operands: [src, dst],
       extra,
     });
@@ -3250,11 +3251,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASL,
+      operation: "ASL",
       operands: [src, dst],
       extra,
     });
@@ -3264,11 +3265,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASL,
+      operation: "ASL",
       operands: [src, dst],
       extra,
     });
@@ -3278,11 +3279,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASR,
+      operation: "ASR",
       operands: [src, dst],
       extra,
     });
@@ -3292,11 +3293,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASR,
+      operation: "ASR",
       operands: [src, dst],
       extra,
     });
@@ -3306,11 +3307,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASR,
+      operation: "ASR",
       operands: [src, dst],
       extra,
     });
@@ -3319,12 +3320,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASL,
+      operation: "ASL",
       operands: [src, dst],
       extra,
     });
@@ -3333,12 +3334,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASL,
+      operation: "ASL",
       operands: [src, dst],
       extra,
     });
@@ -3347,12 +3348,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASL,
+      operation: "ASL",
       operands: [src, dst],
       extra,
     });
@@ -3361,12 +3362,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASR,
+      operation: "ASR",
       operands: [src, dst],
       extra,
     });
@@ -3375,12 +3376,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASR,
+      operation: "ASR",
       operands: [src, dst],
       extra,
     });
@@ -3389,12 +3390,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASR,
+      operation: "ASR",
       operands: [src, dst],
       extra,
     });
@@ -3404,11 +3405,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSL,
+      operation: "LSL",
       operands: [src, dst],
       extra,
     });
@@ -3418,11 +3419,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSL,
+      operation: "LSL",
       operands: [src, dst],
       extra,
     });
@@ -3432,11 +3433,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSL,
+      operation: "LSL",
       operands: [src, dst],
       extra,
     });
@@ -3446,11 +3447,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSR,
+      operation: "LSR",
       operands: [src, dst],
       extra,
     });
@@ -3460,11 +3461,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSR,
+      operation: "LSR",
       operands: [src, dst],
       extra,
     });
@@ -3474,11 +3475,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSR,
+      operation: "LSR",
       operands: [src, dst],
       extra,
     });
@@ -3487,12 +3488,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSL,
+      operation: "LSL",
       operands: [src, dst],
       extra,
     });
@@ -3501,12 +3502,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSL,
+      operation: "LSL",
       operands: [src, dst],
       extra,
     });
@@ -3515,12 +3516,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSL,
+      operation: "LSL",
       operands: [src, dst],
       extra,
     });
@@ -3529,12 +3530,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSR,
+      operation: "LSR",
       operands: [src, dst],
       extra,
     });
@@ -3543,12 +3544,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSR,
+      operation: "LSR",
       operands: [src, dst],
       extra,
     });
@@ -3557,12 +3558,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSR,
+      operation: "LSR",
       operands: [src, dst],
       extra,
     });
@@ -3572,11 +3573,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXL,
+      operation: "ROXL",
       operands: [src, dst],
       extra,
     });
@@ -3586,11 +3587,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXL,
+      operation: "ROXL",
       operands: [src, dst],
       extra,
     });
@@ -3600,11 +3601,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXL,
+      operation: "ROXL",
       operands: [src, dst],
       extra,
     });
@@ -3614,11 +3615,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXR,
+      operation: "ROXR",
       operands: [src, dst],
       extra,
     });
@@ -3628,11 +3629,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXR,
+      operation: "ROXR",
       operands: [src, dst],
       extra,
     });
@@ -3642,11 +3643,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXR,
+      operation: "ROXR",
       operands: [src, dst],
       extra,
     });
@@ -3655,12 +3656,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXL,
+      operation: "ROXL",
       operands: [src, dst],
       extra,
     });
@@ -3669,12 +3670,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXL,
+      operation: "ROXL",
       operands: [src, dst],
       extra,
     });
@@ -3683,12 +3684,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXL,
+      operation: "ROXL",
       operands: [src, dst],
       extra,
     });
@@ -3697,12 +3698,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXR,
+      operation: "ROXR",
       operands: [src, dst],
       extra,
     });
@@ -3711,12 +3712,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXR,
+      operation: "ROXR",
       operands: [src, dst],
       extra,
     });
@@ -3725,12 +3726,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXR,
+      operation: "ROXR",
       operands: [src, dst],
       extra,
     });
@@ -3740,11 +3741,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROL,
+      operation: "ROL",
       operands: [src, dst],
       extra,
     });
@@ -3754,11 +3755,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROL,
+      operation: "ROL",
       operands: [src, dst],
       extra,
     });
@@ -3768,11 +3769,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROL,
+      operation: "ROL",
       operands: [src, dst],
       extra,
     });
@@ -3782,11 +3783,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 1;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROR,
+      operation: "ROR",
       operands: [src, dst],
       extra,
     });
@@ -3796,11 +3797,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 2;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROR,
+      operation: "ROR",
       operands: [src, dst],
       extra,
     });
@@ -3810,11 +3811,11 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = IMM8(c);
-    const dst = cs.dataRegOp(r);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROR,
+      operation: "ROR",
       operands: [src, dst],
       extra,
     });
@@ -3823,12 +3824,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROL,
+      operation: "ROL",
       operands: [src, dst],
       extra,
     });
@@ -3837,12 +3838,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROL,
+      operation: "ROL",
       operands: [src, dst],
       extra,
     });
@@ -3851,12 +3852,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROL,
+      operation: "ROL",
       operands: [src, dst],
       extra,
     });
@@ -3865,12 +3866,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 1;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROR,
+      operation: "ROR",
       operands: [src, dst],
       extra,
     });
@@ -3879,12 +3880,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 2;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROR,
+      operation: "ROR",
       operands: [src, dst],
       extra,
     });
@@ -3893,12 +3894,12 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const c = getBits(w0, 9, 3);
     const r = getBits(w0, 0, 3);
     const size = 4;
-    const src = cs.dataRegOp(c);
-    const dst = cs.dataRegOp(r);
+    const src = DR(c);
+    const dst = DR(r);
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROR,
+      operation: "ROR",
       operands: [src, dst],
       extra,
     });
@@ -3912,7 +3913,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASL,
+      operation: "ASL",
       operands: [src, dst],
       extra,
     });
@@ -3926,7 +3927,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ASR,
+      operation: "ASR",
       operands: [src, dst],
       extra,
     });
@@ -3940,7 +3941,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSL,
+      operation: "LSL",
       operands: [src, dst],
       extra,
     });
@@ -3954,7 +3955,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.LSR,
+      operation: "LSR",
       operands: [src, dst],
       extra,
     });
@@ -3968,7 +3969,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXL,
+      operation: "ROXL",
       operands: [src, dst],
       extra,
     });
@@ -3982,7 +3983,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROXR,
+      operation: "ROXR",
       operands: [src, dst],
       extra,
     });
@@ -3996,7 +3997,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROL,
+      operation: "ROL",
       operands: [src, dst],
       extra,
     });
@@ -4010,7 +4011,7 @@ function decodeGroup1110(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = null;
     return cs.checkOverflow({
       size,
-      operation: Operation.ROR,
+      operation: "ROR",
       operands: [src, dst],
       extra,
     });
@@ -4027,11 +4028,11 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       cs.skipWords(1);
       const size = 10;
       const src = IMM8(o);
-      const dst = cs.floatRegOp(d);
+      const dst = FR(d);
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.FMOVECR,
+        operation: "FMOVECR",
         operands: [src, dst],
         extra,
       });
@@ -4049,7 +4050,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [src, dst],
         extra,
       });
@@ -4067,7 +4068,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSABS,
+        operation: "FSABS",
         operands: [src, dst],
         extra,
       });
@@ -4085,7 +4086,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDABS,
+        operation: "FDABS",
         operands: [src, dst],
         extra,
       });
@@ -4103,7 +4104,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FACOS,
+        operation: "FACOS",
         operands: [src, dst],
         extra,
       });
@@ -4121,7 +4122,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FADD,
+        operation: "FADD",
         operands: [src, dst],
         extra,
       });
@@ -4139,7 +4140,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSADD,
+        operation: "FSADD",
         operands: [src, dst],
         extra,
       });
@@ -4157,7 +4158,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDADD,
+        operation: "FDADD",
         operands: [src, dst],
         extra,
       });
@@ -4175,7 +4176,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FASIN,
+        operation: "FASIN",
         operands: [src, dst],
         extra,
       });
@@ -4193,7 +4194,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FATAN,
+        operation: "FATAN",
         operands: [src, dst],
         extra,
       });
@@ -4211,7 +4212,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FATANH,
+        operation: "FATANH",
         operands: [src, dst],
         extra,
       });
@@ -4227,7 +4228,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.FNOP,
+        operation: "FNOP",
         operands: [src, dst],
         extra,
       });
@@ -4241,7 +4242,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = cs.fpcc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.FBCC,
+      operation: "FBCC",
       operands: [src, dst],
       extra,
     });
@@ -4254,7 +4255,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
     const extra: InstructionExtra | null = cs.fpcc(c);
     return cs.checkOverflow({
       size,
-      operation: Operation.FBCC,
+      operation: "FBCC",
       operands: [src, dst],
       extra,
     });
@@ -4271,7 +4272,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FCMP,
+        operation: "FCMP",
         operands: [src, dst],
         extra,
       });
@@ -4289,7 +4290,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FCOS,
+        operation: "FCOS",
         operands: [src, dst],
         extra,
       });
@@ -4307,7 +4308,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FCOSH,
+        operation: "FCOSH",
         operands: [src, dst],
         extra,
       });
@@ -4320,12 +4321,12 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const c = getBits(w1, 0, 5);
       cs.skipWords(1);
       const size = 2;
-      const src = cs.dataRegOp(r);
+      const src = DR(r);
       const dst = PCDISP(4, simpleDisp(i16(cs.pull16())));
       const extra: InstructionExtra | null = cs.fpcc(c);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDBCC,
+        operation: "FDBCC",
         operands: [src, dst],
         extra,
       });
@@ -4343,7 +4344,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDIV,
+        operation: "FDIV",
         operands: [src, dst],
         extra,
       });
@@ -4361,7 +4362,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSDIV,
+        operation: "FSDIV",
         operands: [src, dst],
         extra,
       });
@@ -4379,7 +4380,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDDIV,
+        operation: "FDDIV",
         operands: [src, dst],
         extra,
       });
@@ -4397,7 +4398,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FETOX,
+        operation: "FETOX",
         operands: [src, dst],
         extra,
       });
@@ -4415,7 +4416,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FETOXM1,
+        operation: "FETOXM1",
         operands: [src, dst],
         extra,
       });
@@ -4433,7 +4434,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FGETEXP,
+        operation: "FGETEXP",
         operands: [src, dst],
         extra,
       });
@@ -4451,7 +4452,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FGETMAN,
+        operation: "FGETMAN",
         operands: [src, dst],
         extra,
       });
@@ -4469,7 +4470,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FGETMAN,
+        operation: "FGETMAN",
         operands: [src, dst],
         extra,
       });
@@ -4487,7 +4488,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FINT,
+        operation: "FINT",
         operands: [src, dst],
         extra,
       });
@@ -4505,7 +4506,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FINTRZ,
+        operation: "FINTRZ",
         operands: [src, dst],
         extra,
       });
@@ -4523,7 +4524,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FLOG10,
+        operation: "FLOG10",
         operands: [src, dst],
         extra,
       });
@@ -4541,7 +4542,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FLOG2,
+        operation: "FLOG2",
         operands: [src, dst],
         extra,
       });
@@ -4559,7 +4560,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FLOGN,
+        operation: "FLOGN",
         operands: [src, dst],
         extra,
       });
@@ -4577,7 +4578,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FLOGNP1,
+        operation: "FLOGNP1",
         operands: [src, dst],
         extra,
       });
@@ -4595,7 +4596,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FMOD,
+        operation: "FMOD",
         operands: [src, dst],
         extra,
       });
@@ -4613,7 +4614,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, dst, src, extra] = cs.decodeFp(r, m, 1, s, d, k);
       return cs.checkOverflow({
         size,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [src, dst],
         extra,
       });
@@ -4631,7 +4632,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [src, dst],
         extra,
       });
@@ -4649,7 +4650,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSMOVE,
+        operation: "FSMOVE",
         operands: [src, dst],
         extra,
       });
@@ -4667,7 +4668,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDMOVE,
+        operation: "FDMOVE",
         operands: [src, dst],
         extra,
       });
@@ -4685,7 +4686,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFpMovem(r, m, D, M, o);
       return cs.checkOverflow({
         size,
-        operation: Operation.FMOVEM,
+        operation: "FMOVEM",
         operands: [src, dst],
         extra,
       });
@@ -4703,7 +4704,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FMUL,
+        operation: "FMUL",
         operands: [src, dst],
         extra,
       });
@@ -4721,7 +4722,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSMUL,
+        operation: "FSMUL",
         operands: [src, dst],
         extra,
       });
@@ -4739,7 +4740,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDMUL,
+        operation: "FDMUL",
         operands: [src, dst],
         extra,
       });
@@ -4757,7 +4758,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FNEG,
+        operation: "FNEG",
         operands: [src, dst],
         extra,
       });
@@ -4775,7 +4776,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSNEG,
+        operation: "FSNEG",
         operands: [src, dst],
         extra,
       });
@@ -4793,7 +4794,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDNEG,
+        operation: "FDNEG",
         operands: [src, dst],
         extra,
       });
@@ -4811,7 +4812,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FREM,
+        operation: "FREM",
         operands: [src, dst],
         extra,
       });
@@ -4829,7 +4830,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSCALE,
+        operation: "FSCALE",
         operands: [src, dst],
         extra,
       });
@@ -4846,7 +4847,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = cs.fpcc(c);
       return cs.checkOverflow({
         size,
-        operation: Operation.FTRAPCC,
+        operation: "FTRAPCC",
         operands: [src, dst],
         extra,
       });
@@ -4863,7 +4864,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = cs.fpcc(c);
       return cs.checkOverflow({
         size,
-        operation: Operation.FTRAPCC,
+        operation: "FTRAPCC",
         operands: [src, dst],
         extra,
       });
@@ -4880,7 +4881,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = cs.fpcc(c);
       return cs.checkOverflow({
         size,
-        operation: Operation.FTRAPCC,
+        operation: "FTRAPCC",
         operands: [src, dst],
         extra,
       });
@@ -4899,7 +4900,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const extra: InstructionExtra | null = cs.fpcc(c);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSCC,
+        operation: "FSCC",
         operands: [src, dst],
         extra,
       });
@@ -4917,7 +4918,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSGLDIV,
+        operation: "FSGLDIV",
         operands: [src, dst],
         extra,
       });
@@ -4935,7 +4936,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSGLMUL,
+        operation: "FSGLMUL",
         operands: [src, dst],
         extra,
       });
@@ -4953,7 +4954,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSIN,
+        operation: "FSIN",
         operands: [src, dst],
         extra,
       });
@@ -4970,10 +4971,10 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const C = getBits(w1, 0, 3);
       cs.skipWords(1);
       const [size, src, _dst, extra] = cs.decodeFp(r, m, R, s, S, 0);
-      const dst = FPAIR(cs.floatReg(S), cs.floatReg(C));
+      const dst = FPAIR(S, C);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSINCOS,
+        operation: "FSINCOS",
         operands: [src, dst],
         extra,
       });
@@ -4991,7 +4992,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSINH,
+        operation: "FSINH",
         operands: [src, dst],
         extra,
       });
@@ -5009,7 +5010,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSQRT,
+        operation: "FSQRT",
         operands: [src, dst],
         extra,
       });
@@ -5027,7 +5028,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSSQRT,
+        operation: "FSSQRT",
         operands: [src, dst],
         extra,
       });
@@ -5045,7 +5046,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDSQRT,
+        operation: "FDSQRT",
         operands: [src, dst],
         extra,
       });
@@ -5063,7 +5064,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSUB,
+        operation: "FSUB",
         operands: [src, dst],
         extra,
       });
@@ -5081,7 +5082,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FSSUB,
+        operation: "FSSUB",
         operands: [src, dst],
         extra,
       });
@@ -5099,7 +5100,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FDSUB,
+        operation: "FDSUB",
         operands: [src, dst],
         extra,
       });
@@ -5117,7 +5118,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FTAN,
+        operation: "FTAN",
         operands: [src, dst],
         extra,
       });
@@ -5135,7 +5136,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FTANH,
+        operation: "FTANH",
         operands: [src, dst],
         extra,
       });
@@ -5153,7 +5154,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FTENTOX,
+        operation: "FTENTOX",
         operands: [src, dst],
         extra,
       });
@@ -5172,7 +5173,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const dst: Operand | null = null;
       return cs.checkOverflow({
         size,
-        operation: Operation.FTST,
+        operation: "FTST",
         operands: [src, dst],
         extra,
       });
@@ -5190,7 +5191,7 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
       const [size, src, dst, extra] = cs.decodeFp(r, m, R, s, d, 0);
       return cs.checkOverflow({
         size,
-        operation: Operation.FTWOTOX,
+        operation: "FTWOTOX",
         operands: [src, dst],
         extra,
       });

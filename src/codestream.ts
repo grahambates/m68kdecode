@@ -1,7 +1,4 @@
 import {
-  AddressRegister,
-  DataRegister,
-  FloatingRegister,
   MemoryIndirection,
   FPConditionCode,
   ConditionCode,
@@ -56,7 +53,7 @@ class CodeStream {
 
   checkOverflow(i: Instruction): DecodedInstruction {
     if (this.error) {
-      throw new Error(DecodingError[this.error]);
+      throw new Error(this.error);
     }
     return { bytesUsed: this.pos, instruction: i };
   }
@@ -70,7 +67,7 @@ class CodeStream {
     if (p + 2 <= this.bytes.length) {
       return (this.bytes[p] << 8) | this.bytes[p + 1];
     } else {
-      this.error = DecodingError.OutOfSpace;
+      this.error = "OutOfSpace";
       return 0;
     }
   }
@@ -91,106 +88,22 @@ class CodeStream {
     return (a << 16) | b;
   }
 
-  dataReg(r: number): DataRegister {
-    switch (r) {
-      case 0:
-        return DataRegister.D0;
-      case 1:
-        return DataRegister.D1;
-      case 2:
-        return DataRegister.D2;
-      case 3:
-        return DataRegister.D3;
-      case 4:
-        return DataRegister.D4;
-      case 5:
-        return DataRegister.D5;
-      case 6:
-        return DataRegister.D6;
-      case 7:
-        return DataRegister.D7;
-      default:
-        this.error = DecodingError.BadRegister;
-        return DataRegister.D0;
-    }
-  }
-
-  addressReg(r: number): AddressRegister {
-    switch (r) {
-      case 0:
-        return AddressRegister.A0;
-      case 1:
-        return AddressRegister.A1;
-      case 2:
-        return AddressRegister.A2;
-      case 3:
-        return AddressRegister.A3;
-      case 4:
-        return AddressRegister.A4;
-      case 5:
-        return AddressRegister.A5;
-      case 6:
-        return AddressRegister.A6;
-      case 7:
-        return AddressRegister.A7;
-      default:
-        this.error = DecodingError.BadRegister;
-        return AddressRegister.A0;
-    }
-  }
-
-  floatReg(r: number): FloatingRegister {
-    switch (r) {
-      case 0:
-        return FloatingRegister.FP0;
-      case 1:
-        return FloatingRegister.FP1;
-      case 2:
-        return FloatingRegister.FP2;
-      case 3:
-        return FloatingRegister.FP3;
-      case 4:
-        return FloatingRegister.FP4;
-      case 5:
-        return FloatingRegister.FP5;
-      case 6:
-        return FloatingRegister.FP6;
-      case 7:
-        return FloatingRegister.FP7;
-      default:
-        this.error = DecodingError.BadRegister;
-        return FloatingRegister.FP0;
-    }
-  }
-
-  dataRegOp(r: number): Operand {
-    return DR(this.dataReg(r));
-  }
-
-  addressRegOp(r: number): Operand {
-    return AR(this.addressReg(r));
-  }
-
-  floatRegOp(r: number): Operand {
-    return FR(this.floatReg(r));
-  }
-
   ea(srcReg: number, srcMod: number, size: number): Operand | null {
     switch (srcMod) {
       case 0b000:
-        return DR(this.dataReg(srcReg));
+        return DR(srcReg);
       case 0b001:
-        return AR(this.addressReg(srcReg));
+        return AR(srcReg);
       case 0b010:
-        return ARIND(this.addressReg(srcReg));
+        return ARIND(srcReg);
       case 0b011:
-        return ARINC(this.addressReg(srcReg));
+        return ARINC(srcReg);
       case 0b100:
-        return ARDEC(this.addressReg(srcReg));
+        return ARDEC(srcReg);
       case 0b101:
-        return ARDISP(this.addressReg(srcReg), simpleDisp(i16(this.pull16())));
+        return ARDISP(srcReg, simpleDisp(i16(this.pull16())));
       case 0b110: {
-        const r = this.addressReg(srcReg);
+        const r = srcReg;
         return this.decodeExtendedEa(r);
       }
       case 0b111: {
@@ -214,25 +127,25 @@ class CodeStream {
               case 4:
                 return IMM32(this.pull32());
               default: {
-                this.error = DecodingError.BadSize;
+                this.error = "BadSize";
                 return null;
               }
             }
           }
           default: {
-            this.error = DecodingError.NotImplemented;
+            this.error = "NotImplemented";
             return null;
           }
         }
       }
       default: {
-        this.error = DecodingError.NotImplemented;
+        this.error = "NotImplemented";
         return null;
       }
     }
   }
 
-  decodeExtendedEa(srcReg: AddressRegister | null): Operand {
+  decodeExtendedEa(srcReg: number | null): Operand {
     const pcOff = u8(this.pos);
     const ext = this.pull16();
     const scale = u8(getBits(ext, 9, 2));
@@ -246,7 +159,7 @@ class CodeStream {
       let disp: number;
       switch (bd) {
         case 0:
-          this.error = DecodingError.Reserved;
+          this.error = "Reserved";
           disp = 0;
           break;
         case 1:
@@ -259,7 +172,7 @@ class CodeStream {
           disp = this.pull32();
           break;
         default:
-          this.error = DecodingError.NotImplemented;
+          this.error = "NotImplemented";
           disp = 0;
       }
       let odisp: number;
@@ -277,7 +190,7 @@ class CodeStream {
           odisp = this.pull32();
           break;
         default:
-          this.error = DecodingError.NotImplemented;
+          this.error = "NotImplemented";
           odisp = 0;
       }
 
@@ -292,29 +205,29 @@ class CodeStream {
             indirectionMode = null;
             break;
           case 0b001:
-            indirectionMode = MemoryIndirection.IndirectPreIndexed;
+            indirectionMode = "IndirectPreIndexed";
             break;
           case 0b010:
-            indirectionMode = MemoryIndirection.IndirectPreIndexed;
+            indirectionMode = "IndirectPreIndexed";
             break;
           case 0b011:
-            indirectionMode = MemoryIndirection.IndirectPreIndexed;
+            indirectionMode = "IndirectPreIndexed";
             break;
           case 0b100:
-            this.error = DecodingError.Reserved;
+            this.error = "Reserved";
             indirectionMode = null;
             break;
           case 0b101:
-            indirectionMode = MemoryIndirection.IndirectPostIndexed;
+            indirectionMode = "IndirectPostIndexed";
             break;
           case 0b110:
-            indirectionMode = MemoryIndirection.IndirectPostIndexed;
+            indirectionMode = "IndirectPostIndexed";
             break;
           case 0b111:
-            indirectionMode = MemoryIndirection.IndirectPostIndexed;
+            indirectionMode = "IndirectPostIndexed";
             break;
           default:
-            this.error = DecodingError.NotImplemented;
+            this.error = "NotImplemented";
             indirectionMode = null;
         }
       } else {
@@ -323,16 +236,16 @@ class CodeStream {
             indirectionMode = null;
             break;
           case 0b001:
-            indirectionMode = MemoryIndirection.Indirect;
+            indirectionMode = "Indirect";
             break;
           case 0b010:
-            indirectionMode = MemoryIndirection.Indirect;
+            indirectionMode = "Indirect";
             break;
           case 0b011:
-            indirectionMode = MemoryIndirection.Indirect;
+            indirectionMode = "Indirect";
             break;
           default:
-            this.error = DecodingError.Reserved;
+            this.error = "Reserved";
             indirectionMode = null;
         }
       }
@@ -340,9 +253,9 @@ class CodeStream {
       let indexer: Indexer | null = null;
       if (!suppressIndexer) {
         if (idxIsA) {
-          indexer = ARIndexer(this.addressReg(idx), scale);
+          indexer = ARIndexer(idx, scale);
         } else {
-          indexer = DRIndexer(this.dataReg(idx), scale);
+          indexer = DRIndexer(idx, scale);
         }
       }
 
@@ -374,8 +287,8 @@ class CodeStream {
       // Handle brief extension word
       const disp = i8(ext & 0xff);
       const indexer: Indexer = idxIsA
-        ? ARIndexer(this.addressReg(idx), scale)
-        : DRIndexer(this.dataReg(idx), scale);
+        ? ARIndexer(idx, scale)
+        : DRIndexer(idx, scale);
 
       const displacement: Displacement = {
         baseDisplacement: disp,
@@ -403,7 +316,7 @@ class CodeStream {
   }
 
   dar(dOrA: number, regno: number): Operand {
-    return dOrA === 0 ? DR(this.dataReg(regno)) : AR(this.addressReg(regno));
+    return dOrA === 0 ? DR(regno) : AR(regno);
   }
 
   bitfield(
@@ -415,12 +328,12 @@ class CodeStream {
     const bfOffset: BitfieldData =
       dynOff === 0
         ? STATIC((off & 31) === 0 ? 32 : u8(off & 31))
-        : DYNAMIC(this.dataReg(off));
+        : DYNAMIC(off);
 
     const bfWidth: BitfieldData =
       dynWidth === 0
         ? STATIC((width & 31) === 0 ? 32 : u8(width & 31))
-        : DYNAMIC(this.dataReg(width));
+        : DYNAMIC(width);
 
     return Bitfield(bfOffset, bfWidth);
   }
@@ -508,27 +421,17 @@ class CodeStream {
           break;
         case 0b111:
           sz = 12;
-          fpform = FPF_PACKED_DECIMAL_REAL_DYNAMIC(this.dataReg(k >> 4));
+          fpform = FPF_PACKED_DECIMAL_REAL_DYNAMIC(k >> 4);
           break;
         default:
-          this.error = DecodingError.Reserved;
+          this.error = "Reserved";
           sz = 0;
           fpform = FPF_BYTE_INT();
       }
 
-      return [
-        sz,
-        this.ea(rg, md, sz),
-        FR(this.floatReg(d)),
-        FloatFormat(fpform),
-      ];
+      return [sz, this.ea(rg, md, sz), FR(d), FloatFormat(fpform)];
     } else {
-      return [
-        10,
-        FR(this.floatReg(s)),
-        FR(this.floatReg(d)),
-        FloatFormat(FPF_EXTENDED_REAL()),
-      ];
+      return [10, FR(s), FR(d), FloatFormat(FPF_EXTENDED_REAL())];
     }
   }
 
@@ -610,8 +513,7 @@ class CodeStream {
   ): [number, Operand | null, Operand | null, InstructionExtra] {
     const ea = this.ea(r, m, 10);
 
-    const regs: Operand =
-      (mode & 1) === 0 ? REGLIST(mask) : this.dataRegOp(mask >> 4);
+    const regs: Operand = (mode & 1) === 0 ? REGLIST(mask) : DR(mask >> 4);
 
     const extra = FloatFormat(FPF_EXTENDED_REAL());
 

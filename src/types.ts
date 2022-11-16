@@ -7,248 +7,208 @@ type DiscriminatedUnion<K extends PropertyKey, T extends object> = {
     : never;
 }[keyof T];
 
-export enum Operation {
-  ANDITOCCR = "ANDITOCCR",
-  ANDITOSR = "ANDITOSR",
-  EORITOCCR = "EORITOCCR",
-  EORITOSR = "EORITOSR",
-  ORITOCCR = "ORITOCCR",
-  ORITOSR = "ORITOSR",
-  MOVEP = "MOVEP",
-  BTST = "BTST",
-  BCHG = "BCHG",
-  BCLR = "BCLR",
-  BSET = "BSET",
-  RTM = "RTM",
-  CALLM = "CALLM",
-  ADDI = "ADDI",
-  SUBI = "SUBI",
-  ANDI = "ANDI",
-  ORI = "ORI",
-  CMP2 = "CMP2",
-  CHK2 = "CHK2",
-  EORI = "EORI",
-  CMPI = "CMPI",
-  MOVES = "MOVES",
-  MOVE = "MOVE",
-  MOVEA = "MOVEA",
-  BGND = "BGND",
-  ILLEGAL = "ILLEGAL",
-  NOP = "NOP",
-  RESET = "RESET",
-  RTD = "RTD",
-  RTE = "RTE",
-  RTR = "RTR",
-  RTS = "RTS",
-  STOP = "STOP",
-  TRAPV = "TRAPV",
-  MOVEC = "MOVEC",
-  SWAP = "SWAP",
-  BKPT = "BKPT",
-  EXTW = "EXTW",
-  EXTL = "EXTL",
-  EXTBL = "EXTBL",
-  LEA = "LEA",
-  LINK = "LINK",
-  UNLK = "UNLK",
-  TRAP = "TRAP",
-  DIVSL = "DIVSL",
-  DIVSLL = "DIVSLL",
-  DIVUL = "DIVUL",
-  DIVULL = "DIVULL",
-  JMP = "JMP",
-  JSR = "JSR",
-  MULS = "MULS",
-  MULU = "MULU",
-  NBCD = "NBCD",
-  MOVEFROMSR = "MOVEFROMSR",
-  MOVETOSR = "MOVETOSR",
-  MOVETOUSP = "MOVETOUSP",
-  MOVEFROMUSP = "MOVEFROMUSP",
-  MOVEFROMCCR = "MOVEFROMCCR",
-  MOVETOCCR = "MOVETOCCR",
-  PEA = "PEA",
-  TAS = "TAS",
-  MOVEM = "MOVEM",
-  CLR = "CLR",
-  NEG = "NEG",
-  NEGX = "NEGX",
-  NOT = "NOT",
-  TST = "TST",
-  CHK = "CHK",
-  DBCC = "DBCC",
-  ADDQ = "ADDQ",
-  SUBQ = "SUBQ",
-  TRAPCC = "TRAPCC",
-  SCC = "SCC",
-  BRA = "BRA",
-  BSR = "BSR",
-  BCC = "BCC",
-  MOVEQ = "MOVEQ",
-  PACK = "PACK",
-  UNPK = "UNPK",
-  SBCD = "SBCD",
-  DIVS = "DIVS",
-  DIVU = "DIVU",
-  OR = "OR",
-  SUBX = "SUBX",
-  SUB = "SUB",
-  SUBA = "SUBA",
-  CMPA = "CMPA",
-  CMPM = "CMPM",
-  CMP = "CMP",
-  EOR = "EOR",
-  ABCD = "ABCD",
-  EXG = "EXG",
-  AND = "AND",
-  ADDX = "ADDX",
-  ADD = "ADD",
-  ADDA = "ADDA",
-  BFCHG = "BFCHG",
-  BFCLR = "BFCLR",
-  BFEXTS = "BFEXTS",
-  BFEXTU = "BFEXTU",
-  BFFFO = "BFFFO",
-  BFINS = "BFINS",
-  BFSET = "BFSET",
-  BFTST = "BFTST",
-  ASL = "ASL",
-  ASR = "ASR",
-  LSL = "LSL",
-  LSR = "LSR",
-  ROXL = "ROXL",
-  ROXR = "ROXR",
-  ROL = "ROL",
-  ROR = "ROR",
-  FMOVECR = "FMOVECR",
-  FABS = "FABS",
-  FSABS = "FSABS",
-  FDABS = "FDABS",
-  FACOS = "FACOS",
-  FADD = "FADD",
-  FSADD = "FSADD",
-  FDADD = "FDADD",
-  FASIN = "FASIN",
-  FATAN = "FATAN",
-  FATANH = "FATANH",
-  FNOP = "FNOP",
-  FBCC = "FBCC",
-  FCMP = "FCMP",
-  FCOS = "FCOS",
-  FCOSH = "FCOSH",
-  FDBCC = "FDBCC",
-  FDIV = "FDIV",
-  FSDIV = "FSDIV",
-  FDDIV = "FDDIV",
-  FETOX = "FETOX",
-  FETOXM1 = "FETOXM1",
-  FGETEXP = "FGETEXP",
-  FGETMAN = "FGETMAN",
-  FINT = "FINT",
-  FINTRZ = "FINTRZ",
-  FLOG10 = "FLOG10",
-  FLOG2 = "FLOG2",
-  FLOGN = "FLOGN",
-  FLOGNP1 = "FLOGNP1",
-  FMOD = "FMOD",
-  FMOVE = "FMOVE",
-  FSMOVE = "FSMOVE",
-  FDMOVE = "FDMOVE",
-  FMOVEM = "FMOVEM",
-  FMUL = "FMUL",
-  FSMUL = "FSMUL",
-  FDMUL = "FDMUL",
-  FNEG = "FNEG",
-  FSNEG = "FSNEG",
-  FDNEG = "FDNEG",
-  FREM = "FREM",
-  FSCALE = "FSCALE",
-  FTRAPCC = "FTRAPCC",
-  FSCC = "FSCC",
-  FSGLDIV = "FSGLDIV",
-  FSGLMUL = "FSGLMUL",
-  FSIN = "FSIN",
-  FSINCOS = "FSINCOS",
-  FSINH = "FSINH",
-  FSQRT = "FSQRT",
-  FSSQRT = "FSSQRT",
-  FDSQRT = "FDSQRT",
-  FSUB = "FSUB",
-  FSSUB = "FSSUB",
-  FDSUB = "FDSUB",
-  FTAN = "FTAN",
-  FTANH = "FTANH",
-  FTENTOX = "FTENTOX",
-  FTST = "FTST",
-  FTWOTOX = "FTWOTOX",
-}
-
-/// One of the 8 data registers.
-export enum DataRegister {
-  D0,
-  D1,
-  D2,
-  D3,
-  D4,
-  D5,
-  D6,
-  D7,
-}
-
-/// One of the 8 address registers.
-///
-/// Note that A7 means `USP` in user mode and `SSP`/`ISP` in supervisor mode.
-export enum AddressRegister {
-  A0,
-  A1,
-  A2,
-  A3,
-  A4,
-  A5,
-  A6,
-  A7,
-}
-
-/// One of the 8 floating point registers.
-export enum FloatingRegister {
-  FP0,
-  FP1,
-  FP2,
-  FP3,
-  FP4,
-  FP5,
-  FP6,
-  FP7,
-}
+export type Operation =
+  | "ANDITOCCR"
+  | "ANDITOSR"
+  | "EORITOCCR"
+  | "EORITOSR"
+  | "ORITOCCR"
+  | "ORITOSR"
+  | "MOVEP"
+  | "BTST"
+  | "BCHG"
+  | "BCLR"
+  | "BSET"
+  | "RTM"
+  | "CALLM"
+  | "ADDI"
+  | "SUBI"
+  | "ANDI"
+  | "ORI"
+  | "CMP2"
+  | "CHK2"
+  | "EORI"
+  | "CMPI"
+  | "MOVES"
+  | "MOVE"
+  | "MOVEA"
+  | "BGND"
+  | "ILLEGAL"
+  | "NOP"
+  | "RESET"
+  | "RTD"
+  | "RTE"
+  | "RTR"
+  | "RTS"
+  | "STOP"
+  | "TRAPV"
+  | "MOVEC"
+  | "SWAP"
+  | "BKPT"
+  | "EXTW"
+  | "EXTL"
+  | "EXTBL"
+  | "LEA"
+  | "LINK"
+  | "UNLK"
+  | "TRAP"
+  | "DIVSL"
+  | "DIVSLL"
+  | "DIVUL"
+  | "DIVULL"
+  | "JMP"
+  | "JSR"
+  | "MULS"
+  | "MULU"
+  | "NBCD"
+  | "MOVEFROMSR"
+  | "MOVETOSR"
+  | "MOVETOUSP"
+  | "MOVEFROMUSP"
+  | "MOVEFROMCCR"
+  | "MOVETOCCR"
+  | "PEA"
+  | "TAS"
+  | "MOVEM"
+  | "CLR"
+  | "NEG"
+  | "NEGX"
+  | "NOT"
+  | "TST"
+  | "CHK"
+  | "DBCC"
+  | "ADDQ"
+  | "SUBQ"
+  | "TRAPCC"
+  | "SCC"
+  | "BRA"
+  | "BSR"
+  | "BCC"
+  | "MOVEQ"
+  | "PACK"
+  | "UNPK"
+  | "SBCD"
+  | "DIVS"
+  | "DIVU"
+  | "OR"
+  | "SUBX"
+  | "SUB"
+  | "SUBA"
+  | "CMPA"
+  | "CMPM"
+  | "CMP"
+  | "EOR"
+  | "ABCD"
+  | "EXG"
+  | "AND"
+  | "ADDX"
+  | "ADD"
+  | "ADDA"
+  | "BFCHG"
+  | "BFCLR"
+  | "BFEXTS"
+  | "BFEXTU"
+  | "BFFFO"
+  | "BFINS"
+  | "BFSET"
+  | "BFTST"
+  | "ASL"
+  | "ASR"
+  | "LSL"
+  | "LSR"
+  | "ROXL"
+  | "ROXR"
+  | "ROL"
+  | "ROR"
+  | "FMOVECR"
+  | "FABS"
+  | "FSABS"
+  | "FDABS"
+  | "FACOS"
+  | "FADD"
+  | "FSADD"
+  | "FDADD"
+  | "FASIN"
+  | "FATAN"
+  | "FATANH"
+  | "FNOP"
+  | "FBCC"
+  | "FCMP"
+  | "FCOS"
+  | "FCOSH"
+  | "FDBCC"
+  | "FDIV"
+  | "FSDIV"
+  | "FDDIV"
+  | "FETOX"
+  | "FETOXM1"
+  | "FGETEXP"
+  | "FGETMAN"
+  | "FINT"
+  | "FINTRZ"
+  | "FLOG10"
+  | "FLOG2"
+  | "FLOGN"
+  | "FLOGNP1"
+  | "FMOD"
+  | "FMOVE"
+  | "FSMOVE"
+  | "FDMOVE"
+  | "FMOVEM"
+  | "FMUL"
+  | "FSMUL"
+  | "FDMUL"
+  | "FNEG"
+  | "FSNEG"
+  | "FDNEG"
+  | "FREM"
+  | "FSCALE"
+  | "FTRAPCC"
+  | "FSCC"
+  | "FSGLDIV"
+  | "FSGLMUL"
+  | "FSIN"
+  | "FSINCOS"
+  | "FSINH"
+  | "FSQRT"
+  | "FSSQRT"
+  | "FDSQRT"
+  | "FSUB"
+  | "FSSUB"
+  | "FDSUB"
+  | "FTAN"
+  | "FTANH"
+  | "FTENTOX"
+  | "FTST"
+  | "FTWOTOX";
 
 /// Indicates how memory indexing is to be performed for 68020+ double memory operands.
-export enum MemoryIndirection {
+export type MemoryIndirection =
   /// Regular memory indirection.
-  Indirect = "Indirect",
+  | "Indirect"
   /// Memory pre-indexed indirection (indexer applies to inner array).
-  IndirectPreIndexed = "IndirectPreIndexed",
+  | "IndirectPreIndexed"
   /// Memory post-indexed indirection (indexer applies to outer array).
-  IndirectPostIndexed = "IndirectPostIndexed",
-}
+  | "IndirectPostIndexed"
 
 /// Indicates how indexing is to be performed.
 export type Indexer = DiscriminatedUnion<
   "kind",
   {
     /// Index using data register
-    DR: { reg: DataRegister; scale: number };
+    DR: { reg: number; scale: number };
     /// Index using address register
-    AR: { reg: AddressRegister; scale: number };
+    AR: { reg: number; scale: number };
   }
 >;
 
 // Indexer factories
-export const DRIndexer = (reg: DataRegister, scale: number): Indexer => ({
+export const DRIndexer = (reg: number, scale: number): Indexer => ({
   kind: "DR",
   reg,
   scale,
 });
-export const ARIndexer = (reg: AddressRegister, scale: number): Indexer => ({
+export const ARIndexer = (reg: number, scale: number): Indexer => ({
   kind: "AR",
   reg,
   scale,
@@ -292,28 +252,28 @@ export type Operand = DiscriminatedUnion<
     /// An absolute address, given as a full 32-bit value.
     ABS32: { value: number };
     /// A data register
-    DR: { reg: DataRegister };
+    DR: { reg: number };
     /// An address register
-    AR: { reg: AddressRegister };
+    AR: { reg: number };
     /// A floating point register
-    FR: { reg: FloatingRegister };
+    FR: { reg: number };
     /// A vanilla indrection without displacement, e.g. `(a0)`
-    ARIND: { reg: AddressRegister };
+    ARIND: { reg: number };
     /// Address register indirect with post-increment, e.g. `(a0)+`
-    ARINC: { reg: AddressRegister };
+    ARINC: { reg: number };
     /// Address register indirect with pre-decrement, e.g. `-(a0)`
-    ARDEC: { reg: AddressRegister };
+    ARDEC: { reg: number };
     /// Address register indirect with displacement, e.g. `123(pc,d0)`
-    ARDISP: { reg: AddressRegister; disp: Displacement };
+    ARDISP: { reg: number; disp: Displacement };
     /// Program counter indirect with displacement, e.g. `123(pc,d0)`
     PCDISP: { offset: number; disp: Displacement };
     /// Just a displacement (skipping the base register), e.g. `123(d0)`
     DISP: { disp: Displacement };
     /// A data register pair, used for 64-bit multiply/divide results.
-    DPAIR: { reg1: DataRegister; reg2: DataRegister };
+    DPAIR: { reg1: number; reg2: number };
     /// A floating point register pair, used for `FSINCOS`. First register receives the sine, the
     /// other the cosine.
-    FPAIR: { reg1: FloatingRegister; reg2: FloatingRegister };
+    FPAIR: { reg1: number; reg2: number };
     /// A register bitmask for `MOVEM` or `FMOVEM`. The order of registers is reversed depending on
     /// whether the address register is pre-decremented or post-incremented.
     REGLIST: { bitmask: number };
@@ -329,22 +289,22 @@ export const IMM16 = (value: number): Operand => ({ kind: "IMM16", value });
 export const IMM32 = (value: number): Operand => ({ kind: "IMM32", value });
 export const ABS16 = (value: number): Operand => ({ kind: "ABS16", value });
 export const ABS32 = (value: number): Operand => ({ kind: "ABS32", value });
-export const DR = (reg: DataRegister): Operand => ({ kind: "DR", reg });
-export const AR = (reg: AddressRegister): Operand => ({ kind: "AR", reg });
-export const FR = (reg: FloatingRegister): Operand => ({ kind: "FR", reg });
-export const ARIND = (reg: AddressRegister): Operand => ({
+export const DR = (reg: number): Operand => ({ kind: "DR", reg });
+export const AR = (reg: number): Operand => ({ kind: "AR", reg });
+export const FR = (reg: number): Operand => ({ kind: "FR", reg });
+export const ARIND = (reg: number): Operand => ({
   kind: "ARIND",
   reg,
 });
-export const ARINC = (reg: AddressRegister): Operand => ({
+export const ARINC = (reg: number): Operand => ({
   kind: "ARINC",
   reg,
 });
-export const ARDEC = (reg: AddressRegister): Operand => ({
+export const ARDEC = (reg: number): Operand => ({
   kind: "ARDEC",
   reg,
 });
-export const ARDISP = (reg: AddressRegister, disp: Displacement): Operand => ({
+export const ARDISP = (reg: number, disp: Displacement): Operand => ({
   kind: "ARDISP",
   reg,
   disp,
@@ -355,15 +315,16 @@ export const PCDISP = (offset: number, disp: Displacement): Operand => ({
   disp,
 });
 export const DISP = (disp: Displacement): Operand => ({ kind: "DISP", disp });
-export const DPAIR = (reg1: DataRegister, reg2: DataRegister): Operand => ({
+export const DPAIR = (reg1: number, reg2: number): Operand => ({
   kind: "DPAIR",
   reg1,
   reg2,
 });
-export const FPAIR = (
-  reg1: FloatingRegister,
-  reg2: FloatingRegister
-): Operand => ({ kind: "FPAIR", reg1, reg2 });
+export const FPAIR = (reg1: number, reg2: number): Operand => ({
+  kind: "FPAIR",
+  reg1,
+  reg2,
+});
 export const REGLIST = (bitmask: number): Operand => ({
   kind: "REGLIST",
   bitmask,
@@ -380,7 +341,7 @@ export type BitfieldData = DiscriminatedUnion<
     /// The offset or width is static.
     STATIC: { value: number };
     /// The offset or width is dynamic and specified via a data register.
-    DYNAMIC: { reg: DataRegister };
+    DYNAMIC: { reg: number };
   }
 >;
 
@@ -389,7 +350,7 @@ export const STATIC = (value: number): BitfieldData => ({
   kind: "STATIC",
   value,
 });
-export const DYNAMIC = (reg: DataRegister): BitfieldData => ({
+export const DYNAMIC = (reg: number): BitfieldData => ({
   kind: "DYNAMIC",
   reg,
 });
@@ -510,10 +471,10 @@ export type FPFormat = DiscriminatedUnion<
     FPF_EXTENDED_REAL: {};
     /// The memory operand is a 68k packed decimal real (BCD encoded) (12 bytes).
     /// For `FMOVE`, this also includes a static _K-factor_ to be applied to the result.
-    FPF_PACKED_DECIMAL_REAL_STATIC: { value: number }; // Includes fmove K-factor
+    FPF_PACKED_DECIMAL_REAL_STATIC: { fmove: number }; // Includes fmove K-factor
     /// The memory operand is a 68k packed decimal real (BCD encoded) (12 bytes).
     /// For `FMOVE`, this also includes a dynamic _K-factor_ to be applied to the result.
-    FPF_PACKED_DECIMAL_REAL_DYNAMIC: { reg: DataRegister }; // Includes fmove K-factor
+    FPF_PACKED_DECIMAL_REAL_DYNAMIC: { fmove: number }; // Includes fmove K-factor
     /// The memory operand is a 16-bit integer.
     FPF_WORD_INT: {};
     /// The memory operand is a IEEE 64-bit double.
@@ -533,15 +494,13 @@ export const FPF_SINGLE = (): FPFormat => ({
 export const FPF_EXTENDED_REAL = (): FPFormat => ({
   kind: "FPF_EXTENDED_REAL",
 });
-export const FPF_PACKED_DECIMAL_REAL_STATIC = (value: number): FPFormat => ({
+export const FPF_PACKED_DECIMAL_REAL_STATIC = (fmove: number): FPFormat => ({
   kind: "FPF_PACKED_DECIMAL_REAL_STATIC",
-  value,
+  fmove,
 });
-export const FPF_PACKED_DECIMAL_REAL_DYNAMIC = (
-  reg: DataRegister
-): FPFormat => ({
+export const FPF_PACKED_DECIMAL_REAL_DYNAMIC = (fmove: number): FPFormat => ({
   kind: "FPF_PACKED_DECIMAL_REAL_DYNAMIC",
-  reg,
+  fmove,
 });
 export const FPF_WORD_INT = (): FPFormat => ({
   kind: "FPF_WORD_INT",
@@ -619,15 +578,14 @@ export interface DecodedInstruction {
 }
 
 /// export Enumerates errors that can happen while decoding instructions.
-export enum DecodingError {
+export type DecodingError =
   /// The instruction is not implemented in the decoder.
-  NotImplemented,
+  | "NotImplemented"
   /// The code stream doesn't contain enough data to decode the instruction.
-  OutOfSpace,
+  | "OutOfSpace"
   /// An illegal register was specified in the instruction encoding.
-  BadRegister,
+  | "BadRegister"
   /// An illegal size was specified in the instruction encoding.
-  BadSize,
+  | "BadSize"
   /// A reserved case was hit in the instruction encoding.
-  Reserved,
-}
+  | "Reserved";

@@ -1,4 +1,4 @@
-import { DataRegister, Displacement } from "./types";
+import { Displacement } from "./types";
 
 export function getBits(word: number, first: number, length: number): number {
   const s = word >> first;
@@ -17,7 +17,7 @@ export const simpleDisp = (disp: number): Displacement => ({
 /// Convenience function (for tests and decoding cases) to generate a displacement with a data
 /// register and scale.
 export const drDispScale = (
-  dr: DataRegister,
+  dr: number,
   disp: number,
   scale: number
 ): Displacement => ({
@@ -29,7 +29,7 @@ export const drDispScale = (
 
 /// Convenience function (for tests and decoding cases) to generate a displacement with a data
 /// register.
-export const drDisp = (dr: DataRegister, disp: number): Displacement =>
+export const drDisp = (dr: number, disp: number): Displacement =>
   drDispScale(dr, disp, 0);
 
 // Signed integer conversion

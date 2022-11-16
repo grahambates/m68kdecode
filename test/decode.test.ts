@@ -12,7 +12,6 @@ import decodeInstruction, {
   Condition,
   ConditionCode,
   CONTROLREG,
-  DecodingError,
   DISP,
   DPAIR,
   DR,
@@ -36,7 +35,6 @@ import decodeInstruction, {
   IMM8,
   Implied,
   Instruction,
-  Operation,
   PackAdjustment,
   PCDISP,
   REGLIST,
@@ -49,9 +47,9 @@ describe("decodeInstruction", () => {
     [
       " move.b d0,d1",
       [0x12, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -59,9 +57,9 @@ describe("decodeInstruction", () => {
     [
       " move.b d2,d3",
       [0x16, 0x02],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [DR(2), DR(3)],
         extra: null,
       },
@@ -69,9 +67,9 @@ describe("decodeInstruction", () => {
     [
       " move.b d4,d5",
       [0x1a, 0x04],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [DR(4), DR(5)],
         extra: null,
       },
@@ -79,9 +77,9 @@ describe("decodeInstruction", () => {
     [
       " move.b d6,d7",
       [0x1e, 0x06],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [DR(6), DR(7)],
         extra: null,
       },
@@ -89,9 +87,9 @@ describe("decodeInstruction", () => {
     [
       " move.w a0,a1",
       [0x32, 0x48],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVEA,
+        operation: "MOVEA",
         operands: [AR(0), AR(1)],
         extra: null,
       },
@@ -99,9 +97,9 @@ describe("decodeInstruction", () => {
     [
       " move.w a2,a3",
       [0x36, 0x4a],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVEA,
+        operation: "MOVEA",
         operands: [AR(2), AR(3)],
         extra: null,
       },
@@ -109,9 +107,9 @@ describe("decodeInstruction", () => {
     [
       " move.w a4,a5",
       [0x3a, 0x4c],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVEA,
+        operation: "MOVEA",
         operands: [AR(4), AR(5)],
         extra: null,
       },
@@ -119,9 +117,9 @@ describe("decodeInstruction", () => {
     [
       " move.w a6,a7",
       [0x3e, 0x4e],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVEA,
+        operation: "MOVEA",
         operands: [AR(6), AR(7)],
         extra: null,
       },
@@ -129,9 +127,9 @@ describe("decodeInstruction", () => {
     [
       " move.b 123(a0,d0),d3",
       [0x16, 0x30, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [ARDISP(0, drDisp(0, 123)), DR(3)],
         extra: null,
       },
@@ -139,9 +137,9 @@ describe("decodeInstruction", () => {
     [
       " move.w 123(a0,d0),d3",
       [0x36, 0x30, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [ARDISP(0, drDisp(0, 123)), DR(3)],
         extra: null,
       },
@@ -149,9 +147,9 @@ describe("decodeInstruction", () => {
     [
       " move.l 123(a0,d0),d3",
       [0x26, 0x30, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [ARDISP(0, drDisp(0, 123)), DR(3)],
         extra: null,
       },
@@ -159,9 +157,9 @@ describe("decodeInstruction", () => {
     [
       " move.l 123(a0,d0),a1",
       [0x22, 0x70, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEA,
+        operation: "MOVEA",
         operands: [ARDISP(0, drDisp(0, 123)), AR(1)],
         extra: null,
       },
@@ -169,9 +167,9 @@ describe("decodeInstruction", () => {
     [
       " move.w 123(a0,d0),a1",
       [0x32, 0x70, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVEA,
+        operation: "MOVEA",
         operands: [ARDISP(0, drDisp(0, 123)), AR(1)],
         extra: null,
       },
@@ -179,9 +177,9 @@ describe("decodeInstruction", () => {
     [
       " move.b #$12,d7",
       [0x1e, 0x3c, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [IMM8(0x12), DR(7)],
         extra: null,
       },
@@ -189,9 +187,9 @@ describe("decodeInstruction", () => {
     [
       " move.w #$1234,d7",
       [0x3e, 0x3c, 0x12, 0x34],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [IMM16(0x1234), DR(7)],
         extra: null,
       },
@@ -199,9 +197,9 @@ describe("decodeInstruction", () => {
     [
       " move.l #$12345678,d7",
       [0x2e, 0x3c, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [IMM32(0x12345678), DR(7)],
         extra: null,
       },
@@ -209,9 +207,9 @@ describe("decodeInstruction", () => {
     [
       " move.l D1,-(A2)",
       [0x25, 0x01],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [DR(1), ARDEC(2)],
         extra: null,
       },
@@ -219,9 +217,9 @@ describe("decodeInstruction", () => {
     [
       " move.l D1,(A2)+",
       [0x24, 0xc1],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [DR(1), ARINC(2)],
         extra: null,
       },
@@ -229,9 +227,9 @@ describe("decodeInstruction", () => {
     [
       " move.l -(A4),(A2)+",
       [0x24, 0xe4],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [ARDEC(4), ARINC(2)],
         extra: null,
       },
@@ -239,9 +237,9 @@ describe("decodeInstruction", () => {
     [
       " move.l 4.w,A0",
       [0x20, 0x78, 0x00, 0x04],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEA,
+        operation: "MOVEA",
         operands: [ABS16(4), AR(0)],
         extra: null,
       },
@@ -249,9 +247,9 @@ describe("decodeInstruction", () => {
     [
       " move.l $11223344,A0",
       [0x20, 0x79, 0x11, 0x22, 0x33, 0x44],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEA,
+        operation: "MOVEA",
         operands: [ABS32(0x11223344), AR(0)],
         extra: null,
       },
@@ -259,9 +257,9 @@ describe("decodeInstruction", () => {
     [
       " move.w #$1234,123(d0)",
       [0x31, 0xbc, 0x12, 0x34, 0x01, 0xa0, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [
           IMM16(0x1234),
           DISP({
@@ -277,9 +275,9 @@ describe("decodeInstruction", () => {
     [
       " move.w -8(pc),d3",
       [0x36, 0x3a, 0xff, 0xf8],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [
           PCDISP(2, {
             baseDisplacement: -8,
@@ -295,9 +293,9 @@ describe("decodeInstruction", () => {
     [
       " move.w -8(pc,d2*8),d3",
       [0x36, 0x3b, 0x26, 0xf8],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [
           PCDISP(2, {
             baseDisplacement: -8,
@@ -313,9 +311,9 @@ describe("decodeInstruction", () => {
     [
       " move.w 123(a1,d2*4),9876(a2,d3*2)",
       [0x35, 0xb1, 0x24, 0x7b, 0x33, 0x20, 0x26, 0x94],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [
           ARDISP(1, drDispScale(2, 123, 2)),
           ARDISP(2, drDispScale(3, 9876, 1)),
@@ -326,9 +324,9 @@ describe("decodeInstruction", () => {
     [
       " move.w d0,12345(a0,a1*2)",
       [0x31, 0x80, 0x93, 0x20, 0x30, 0x39],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVE,
+        operation: "MOVE",
         operands: [
           DR(0),
           ARDISP(0, {
@@ -344,9 +342,9 @@ describe("decodeInstruction", () => {
     [
       " lea (a0),a1",
       [0x43, 0xd0],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.LEA,
+        operation: "LEA",
         operands: [ARIND(0), AR(1)],
         extra: null,
       },
@@ -354,9 +352,9 @@ describe("decodeInstruction", () => {
     [
       " lea 8(a0),a1",
       [0x43, 0xe8, 0x00, 0x08],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.LEA,
+        operation: "LEA",
         operands: [ARDISP(0, simpleDisp(8)), AR(1)],
         extra: null,
       },
@@ -364,9 +362,9 @@ describe("decodeInstruction", () => {
     [
       " ori #17,ccr",
       [0x00, 0x3c, 0x00, 0x11],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ORITOCCR,
+        operation: "ORITOCCR",
         operands: [IMM8(17), Implied()],
         extra: null,
       },
@@ -374,9 +372,9 @@ describe("decodeInstruction", () => {
     [
       " ori #$1234,sr",
       [0x00, 0x7c, 0x12, 0x34],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ORITOSR,
+        operation: "ORITOSR",
         operands: [IMM16(0x1234), Implied()],
         extra: null,
       },
@@ -384,9 +382,9 @@ describe("decodeInstruction", () => {
     [
       " ori.w #$1234,d0",
       [0x00, 0x40, 0x12, 0x34],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ORI,
+        operation: "ORI",
         operands: [IMM16(0x1234), DR(0)],
         extra: null,
       },
@@ -394,9 +392,9 @@ describe("decodeInstruction", () => {
     [
       " ori.b #$12,d2",
       [0x00, 0x02, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ORI,
+        operation: "ORI",
         operands: [IMM8(0x12), DR(2)],
         extra: null,
       },
@@ -404,9 +402,9 @@ describe("decodeInstruction", () => {
     [
       " ori.w #$1234,123(a0,d0)",
       [0x00, 0x70, 0x12, 0x34, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ORI,
+        operation: "ORI",
         operands: [IMM16(0x1234), ARDISP(0, drDisp(0, 123))],
         extra: null,
       },
@@ -414,9 +412,9 @@ describe("decodeInstruction", () => {
     [
       " ori.l #$12345678,-(a0)",
       [0x00, 0xa0, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ORI,
+        operation: "ORI",
         operands: [IMM32(0x12345678), ARDEC(0)],
         extra: null,
       },
@@ -424,9 +422,9 @@ describe("decodeInstruction", () => {
     [
       " andi #17,ccr",
       [0x02, 0x3c, 0x00, 0x11],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ANDITOCCR,
+        operation: "ANDITOCCR",
         operands: [IMM8(17), Implied()],
         extra: null,
       },
@@ -434,9 +432,9 @@ describe("decodeInstruction", () => {
     [
       " andi #$1234,sr",
       [0x02, 0x7c, 0x12, 0x34],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ANDITOSR,
+        operation: "ANDITOSR",
         operands: [IMM16(0x1234), Implied()],
         extra: null,
       },
@@ -444,9 +442,9 @@ describe("decodeInstruction", () => {
     [
       " andi.w #$1234,d0",
       [0x02, 0x40, 0x12, 0x34],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ANDI,
+        operation: "ANDI",
         operands: [IMM16(0x1234), DR(0)],
         extra: null,
       },
@@ -454,9 +452,9 @@ describe("decodeInstruction", () => {
     [
       " andi.b #$12,d2",
       [0x02, 0x02, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ANDI,
+        operation: "ANDI",
         operands: [IMM8(0x12), DR(2)],
         extra: null,
       },
@@ -464,9 +462,9 @@ describe("decodeInstruction", () => {
     [
       " andi.w #$1234,123(a0,d0)",
       [0x02, 0x70, 0x12, 0x34, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ANDI,
+        operation: "ANDI",
         operands: [IMM16(0x1234), ARDISP(0, drDisp(0, 123))],
         extra: null,
       },
@@ -474,9 +472,9 @@ describe("decodeInstruction", () => {
     [
       " andi.l #$12345678,-(a0)",
       [0x02, 0xa0, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ANDI,
+        operation: "ANDI",
         operands: [IMM32(0x12345678), ARDEC(0)],
         extra: null,
       },
@@ -484,9 +482,9 @@ describe("decodeInstruction", () => {
     [
       " eori #17,ccr",
       [0x0a, 0x3c, 0x00, 0x11],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.EORITOCCR,
+        operation: "EORITOCCR",
         operands: [IMM8(17), Implied()],
         extra: null,
       },
@@ -494,9 +492,9 @@ describe("decodeInstruction", () => {
     [
       " eori #$1234,sr",
       [0x0a, 0x7c, 0x12, 0x34],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.EORITOSR,
+        operation: "EORITOSR",
         operands: [IMM16(0x1234), Implied()],
         extra: null,
       },
@@ -504,9 +502,9 @@ describe("decodeInstruction", () => {
     [
       " eori.w #$1234,d0",
       [0x0a, 0x40, 0x12, 0x34],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.EORI,
+        operation: "EORI",
         operands: [IMM16(0x1234), DR(0)],
         extra: null,
       },
@@ -514,9 +512,9 @@ describe("decodeInstruction", () => {
     [
       " eori.b #$12,d2",
       [0x0a, 0x02, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.EORI,
+        operation: "EORI",
         operands: [IMM8(0x12), DR(2)],
         extra: null,
       },
@@ -524,9 +522,9 @@ describe("decodeInstruction", () => {
     [
       " eori.w #$1234,123(a0,d0)",
       [0x0a, 0x70, 0x12, 0x34, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.EORI,
+        operation: "EORI",
         operands: [IMM16(0x1234), ARDISP(0, drDisp(0, 123))],
         extra: null,
       },
@@ -534,9 +532,9 @@ describe("decodeInstruction", () => {
     [
       " eori.l #$12345678,-(a0)",
       [0x0a, 0xa0, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.EORI,
+        operation: "EORI",
         operands: [IMM32(0x12345678), ARDEC(0)],
         extra: null,
       },
@@ -544,9 +542,9 @@ describe("decodeInstruction", () => {
     [
       " addi.l #$12345678,-(a0)",
       [0x06, 0xa0, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ADDI,
+        operation: "ADDI",
         operands: [IMM32(0x12345678), ARDEC(0)],
         extra: null,
       },
@@ -554,9 +552,9 @@ describe("decodeInstruction", () => {
     [
       " subi.l #$12345678,-(a0)",
       [0x04, 0xa0, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.SUBI,
+        operation: "SUBI",
         operands: [IMM32(0x12345678), ARDEC(0)],
         extra: null,
       },
@@ -564,9 +562,9 @@ describe("decodeInstruction", () => {
     [
       " rtm d3",
       [0x06, 0xc3],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.RTM,
+        operation: "RTM",
         operands: [DR(3), null],
         extra: null,
       },
@@ -574,9 +572,9 @@ describe("decodeInstruction", () => {
     [
       " rtm a1",
       [0x06, 0xc9],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.RTM,
+        operation: "RTM",
         operands: [AR(1), null],
         extra: null,
       },
@@ -584,9 +582,9 @@ describe("decodeInstruction", () => {
     [
       " callm #3,(a1)",
       [0x06, 0xd1, 0x00, 0x03],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.CALLM,
+        operation: "CALLM",
         operands: [IMM8(3), ARIND(1)],
         extra: null,
       },
@@ -594,9 +592,9 @@ describe("decodeInstruction", () => {
     [
       " callm #99,$12345678",
       [0x06, 0xf9, 0x00, 0x63, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.CALLM,
+        operation: "CALLM",
         operands: [IMM8(99), ABS32(0x12345678)],
         extra: null,
       },
@@ -604,9 +602,9 @@ describe("decodeInstruction", () => {
     [
       " cmp2.l (a0),d3",
       [0x04, 0xd0, 0x30, 0x00],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.CMP2,
+        operation: "CMP2",
         operands: [ARIND(0), DR(3)],
         extra: null,
       },
@@ -614,9 +612,9 @@ describe("decodeInstruction", () => {
     [
       " cmp2.b 90(a0,d2),a6",
       [0x00, 0xf0, 0xe0, 0x00, 0x20, 0x5a],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.CMP2,
+        operation: "CMP2",
         operands: [ARDISP(0, drDisp(2, 90)), AR(6)],
         extra: null,
       },
@@ -624,9 +622,9 @@ describe("decodeInstruction", () => {
     [
       " chk2.w 90(a0,d2),a6",
       [0x02, 0xf0, 0xe8, 0x00, 0x20, 0x5a],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.CHK2,
+        operation: "CHK2",
         operands: [ARDISP(0, drDisp(2, 90)), AR(6)],
         extra: null,
       },
@@ -634,9 +632,9 @@ describe("decodeInstruction", () => {
     [
       " cmpi.b #$a5,90(a0,d2*4)",
       [0x0c, 0x30, 0x00, 0xa5, 0x24, 0x5a],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.CMPI,
+        operation: "CMPI",
         operands: [IMM8(0xa5), ARDISP(0, drDispScale(2, 90, 2))],
         extra: null,
       },
@@ -644,9 +642,9 @@ describe("decodeInstruction", () => {
     [
       " cmpi.w #$a512,90(a0,d2*4)",
       [0x0c, 0x70, 0xa5, 0x12, 0x24, 0x5a],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.CMPI,
+        operation: "CMPI",
         operands: [IMM16(0xa512), ARDISP(0, drDispScale(2, 90, 2))],
         extra: null,
       },
@@ -654,9 +652,9 @@ describe("decodeInstruction", () => {
     [
       " cmpi.l #$12345678,90(a0,d2*4)",
       [0x0c, 0xb0, 0x12, 0x34, 0x56, 0x78, 0x24, 0x5a],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.CMPI,
+        operation: "CMPI",
         operands: [IMM32(0x12345678), ARDISP(0, drDispScale(2, 90, 2))],
         extra: null,
       },
@@ -664,9 +662,9 @@ describe("decodeInstruction", () => {
     [
       " btst #18,d0",
       [0x08, 0x00, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.BTST,
+        operation: "BTST",
         operands: [IMM16(18), DR(0)],
         extra: null,
       },
@@ -674,9 +672,9 @@ describe("decodeInstruction", () => {
     [
       " btst #18,(a0)+",
       [0x08, 0x18, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.BTST,
+        operation: "BTST",
         operands: [IMM16(18), ARINC(0)],
         extra: null,
       },
@@ -684,9 +682,9 @@ describe("decodeInstruction", () => {
     [
       " bclr #18,(a0)+",
       [0x08, 0x98, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.BCLR,
+        operation: "BCLR",
         operands: [IMM16(18), ARINC(0)],
         extra: null,
       },
@@ -694,9 +692,9 @@ describe("decodeInstruction", () => {
     [
       " bchg #18,(a0)+",
       [0x08, 0x58, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.BCHG,
+        operation: "BCHG",
         operands: [IMM16(18), ARINC(0)],
         extra: null,
       },
@@ -704,9 +702,9 @@ describe("decodeInstruction", () => {
     [
       " bset #18,(a0)+",
       [0x08, 0xd8, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.BSET,
+        operation: "BSET",
         operands: [IMM16(18), ARINC(0)],
         extra: null,
       },
@@ -714,9 +712,9 @@ describe("decodeInstruction", () => {
     [
       " moves.l a0,(a1)",
       [0x0e, 0x91, 0x88, 0x00],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVES,
+        operation: "MOVES",
         operands: [AR(0), ARIND(1)],
         extra: null,
       },
@@ -724,25 +722,25 @@ describe("decodeInstruction", () => {
     [
       " moves.b d0,(a1)",
       [0x0e, 0x11, 0x08, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.MOVES,
+        operation: "MOVES",
         operands: [DR(0), ARIND(1)],
         extra: null,
       },
     ],
-    [" cas d0,d1,(a0)", [0x0c, 0xd0, 0x00, 0x40], DecodingError.NotImplemented],
+    [" cas d0,d1,(a0)", [0x0c, 0xd0, 0x00, 0x40], "NotImplemented"],
     [
       " cas2 d0:d1,d2:d3,(a0):(a1)",
       [0x0c, 0xfc, 0x80, 0x80, 0x90, 0xc1],
-      DecodingError.NotImplemented,
+      "NotImplemented",
     ],
     [
       " illegal",
       [0x4a, 0xfc],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.ILLEGAL,
+        operation: "ILLEGAL",
         operands: [null, null],
         extra: null,
       },
@@ -750,9 +748,9 @@ describe("decodeInstruction", () => {
     [
       " nop",
       [0x4e, 0x71],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.NOP,
+        operation: "NOP",
         operands: [null, null],
         extra: null,
       },
@@ -760,9 +758,9 @@ describe("decodeInstruction", () => {
     [
       " reset",
       [0x4e, 0x70],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.RESET,
+        operation: "RESET",
         operands: [null, null],
         extra: null,
       },
@@ -770,9 +768,9 @@ describe("decodeInstruction", () => {
     [
       " rtd #578",
       [0x4e, 0x74, 0x02, 0x42],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.RTD,
+        operation: "RTD",
         operands: [IMM16(578), null],
         extra: null,
       },
@@ -780,9 +778,9 @@ describe("decodeInstruction", () => {
     [
       " rte",
       [0x4e, 0x73],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.RTE,
+        operation: "RTE",
         operands: [null, null],
         extra: null,
       },
@@ -790,9 +788,9 @@ describe("decodeInstruction", () => {
     [
       " rtr",
       [0x4e, 0x77],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.RTR,
+        operation: "RTR",
         operands: [null, null],
         extra: null,
       },
@@ -800,9 +798,9 @@ describe("decodeInstruction", () => {
     [
       " rts",
       [0x4e, 0x75],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.RTS,
+        operation: "RTS",
         operands: [null, null],
         extra: null,
       },
@@ -810,9 +808,9 @@ describe("decodeInstruction", () => {
     [
       " stop #123",
       [0x4e, 0x72, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.STOP,
+        operation: "STOP",
         operands: [IMM16(123), null],
         extra: null,
       },
@@ -820,9 +818,9 @@ describe("decodeInstruction", () => {
     [
       " trapv",
       [0x4e, 0x76],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.TRAPV,
+        operation: "TRAPV",
         operands: [null, null],
         extra: null,
       },
@@ -830,9 +828,9 @@ describe("decodeInstruction", () => {
     [
       " swap d7",
       [0x48, 0x47],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.SWAP,
+        operation: "SWAP",
         operands: [DR(7), null],
         extra: null,
       },
@@ -840,9 +838,9 @@ describe("decodeInstruction", () => {
     [
       " bkpt #3",
       [0x48, 0x4b],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BKPT,
+        operation: "BKPT",
         operands: [IMM8(3), null],
         extra: null,
       },
@@ -850,9 +848,9 @@ describe("decodeInstruction", () => {
     [
       " ext.w d6",
       [0x48, 0x86],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.EXTW,
+        operation: "EXTW",
         operands: [DR(6), null],
         extra: null,
       },
@@ -860,9 +858,9 @@ describe("decodeInstruction", () => {
     [
       " ext.l d6",
       [0x48, 0xc6],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.EXTL,
+        operation: "EXTL",
         operands: [DR(6), null],
         extra: null,
       },
@@ -870,9 +868,9 @@ describe("decodeInstruction", () => {
     [
       " extb.l d6",
       [0x49, 0xc6],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.EXTBL,
+        operation: "EXTBL",
         operands: [DR(6), null],
         extra: null,
       },
@@ -880,9 +878,9 @@ describe("decodeInstruction", () => {
     [
       " link.w a0,#1234",
       [0x4e, 0x50, 0x04, 0xd2],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.LINK,
+        operation: "LINK",
         operands: [AR(0), IMM16(1234)],
         extra: null,
       },
@@ -890,9 +888,9 @@ describe("decodeInstruction", () => {
     [
       " link.l a5,#$12345678",
       [0x48, 0x0d, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.LINK,
+        operation: "LINK",
         operands: [AR(5), IMM32(0x12345678)],
         extra: null,
       },
@@ -900,9 +898,9 @@ describe("decodeInstruction", () => {
     [
       " unlk a2",
       [0x4e, 0x5a],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.UNLK,
+        operation: "UNLK",
         operands: [AR(2), null],
         extra: null,
       },
@@ -910,9 +908,9 @@ describe("decodeInstruction", () => {
     [
       " trap #15",
       [0x4e, 0x4f],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.TRAP,
+        operation: "TRAP",
         operands: [IMM8(15), null],
         extra: null,
       },
@@ -920,9 +918,9 @@ describe("decodeInstruction", () => {
     [
       " divs.w (a1)+,d2",
       [0x85, 0xd9],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DIVS,
+        operation: "DIVS",
         operands: [ARINC(1), DR(2)],
         extra: null,
       },
@@ -930,9 +928,9 @@ describe("decodeInstruction", () => {
     [
       " divs.l d0,d2",
       [0x4c, 0x40, 0x28, 0x02],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.DIVSL,
+        operation: "DIVSL",
         operands: [DR(0), DR(2)],
         extra: null,
       },
@@ -940,9 +938,9 @@ describe("decodeInstruction", () => {
     [
       " divs.l d0,d3:d2",
       [0x4c, 0x40, 0x2c, 0x03],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.DIVSL,
+        operation: "DIVSL",
         operands: [DR(0), DPAIR(2, 3)],
         extra: null,
       },
@@ -950,9 +948,9 @@ describe("decodeInstruction", () => {
     [
       " divsl.l d0,d3:d2",
       [0x4c, 0x40, 0x28, 0x03],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.DIVSLL,
+        operation: "DIVSLL",
         operands: [DR(0), DPAIR(2, 3)],
         extra: null,
       },
@@ -960,9 +958,9 @@ describe("decodeInstruction", () => {
     [
       " divu.w (a1)+,d2",
       [0x84, 0xd9],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DIVU,
+        operation: "DIVU",
         operands: [ARINC(1), DR(2)],
         extra: null,
       },
@@ -970,9 +968,9 @@ describe("decodeInstruction", () => {
     [
       " divu.l d0,d2",
       [0x4c, 0x40, 0x20, 0x02],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.DIVUL,
+        operation: "DIVUL",
         operands: [DR(0), DR(2)],
         extra: null,
       },
@@ -980,9 +978,9 @@ describe("decodeInstruction", () => {
     [
       " divu.l d0,d3:d2",
       [0x4c, 0x40, 0x24, 0x03],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.DIVUL,
+        operation: "DIVUL",
         operands: [DR(0), DPAIR(2, 3)],
         extra: null,
       },
@@ -990,9 +988,9 @@ describe("decodeInstruction", () => {
     [
       " divul.l d0,d3:d2",
       [0x4c, 0x40, 0x20, 0x03],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.DIVULL,
+        operation: "DIVULL",
         operands: [DR(0), DPAIR(2, 3)],
         extra: null,
       },
@@ -1000,9 +998,9 @@ describe("decodeInstruction", () => {
     [
       " jmp (a0)",
       [0x4e, 0xd0],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.JMP,
+        operation: "JMP",
         operands: [ARIND(0), null],
         extra: null,
       },
@@ -1010,9 +1008,9 @@ describe("decodeInstruction", () => {
     [
       " jmp $12345678",
       [0x4e, 0xf9, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.JMP,
+        operation: "JMP",
         operands: [ABS32(0x12345678), null],
         extra: null,
       },
@@ -1020,9 +1018,9 @@ describe("decodeInstruction", () => {
     [
       " jmp 123(pc)",
       [0x4e, 0xfa, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.JMP,
+        operation: "JMP",
         operands: [
           PCDISP(2, {
             baseDisplacement: 123,
@@ -1038,9 +1036,9 @@ describe("decodeInstruction", () => {
     [
       " jsr (a0)",
       [0x4e, 0x90],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.JSR,
+        operation: "JSR",
         operands: [ARIND(0), null],
         extra: null,
       },
@@ -1048,9 +1046,9 @@ describe("decodeInstruction", () => {
     [
       " jsr $12345678",
       [0x4e, 0xb9, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.JSR,
+        operation: "JSR",
         operands: [ABS32(0x12345678), null],
         extra: null,
       },
@@ -1058,9 +1056,9 @@ describe("decodeInstruction", () => {
     [
       " jsr 123(pc)",
       [0x4e, 0xba, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.JSR,
+        operation: "JSR",
         operands: [
           PCDISP(2, {
             baseDisplacement: 123,
@@ -1076,9 +1074,9 @@ describe("decodeInstruction", () => {
     [
       " muls.w  d0,d1",
       [0xc3, 0xc0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MULS,
+        operation: "MULS",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1086,9 +1084,9 @@ describe("decodeInstruction", () => {
     [
       " muls.l  d0,d1",
       [0x4c, 0x00, 0x18, 0x01],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MULS,
+        operation: "MULS",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1096,9 +1094,9 @@ describe("decodeInstruction", () => {
     [
       " muls.l  d0,d2:d1",
       [0x4c, 0x00, 0x1c, 0x02],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MULS,
+        operation: "MULS",
         operands: [DR(0), DPAIR(1, 2)],
         extra: null,
       },
@@ -1106,9 +1104,9 @@ describe("decodeInstruction", () => {
     [
       " mulu.w  d0,d1",
       [0xc2, 0xc0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MULU,
+        operation: "MULU",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1116,9 +1114,9 @@ describe("decodeInstruction", () => {
     [
       " mulu.l  d0,d1",
       [0x4c, 0x00, 0x10, 0x01],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MULU,
+        operation: "MULU",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1126,9 +1124,9 @@ describe("decodeInstruction", () => {
     [
       " mulu.l  d0,d2:d1",
       [0x4c, 0x00, 0x14, 0x02],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MULU,
+        operation: "MULU",
         operands: [DR(0), DPAIR(1, 2)],
         extra: null,
       },
@@ -1136,9 +1134,9 @@ describe("decodeInstruction", () => {
     [
       " nbcd  (a0)+",
       [0x48, 0x18],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.NBCD,
+        operation: "NBCD",
         operands: [ARINC(0), null],
         extra: null,
       },
@@ -1146,9 +1144,9 @@ describe("decodeInstruction", () => {
     [
       " move sr,d0",
       [0x40, 0xc0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVEFROMSR,
+        operation: "MOVEFROMSR",
         operands: [Implied(), DR(0)],
         extra: null,
       },
@@ -1156,9 +1154,9 @@ describe("decodeInstruction", () => {
     [
       " move d0,sr",
       [0x46, 0xc0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVETOSR,
+        operation: "MOVETOSR",
         operands: [DR(0), Implied()],
         extra: null,
       },
@@ -1166,9 +1164,9 @@ describe("decodeInstruction", () => {
     [
       " move a0,usp",
       [0x4e, 0x60],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVETOUSP,
+        operation: "MOVETOUSP",
         operands: [AR(0), Implied()],
         extra: null,
       },
@@ -1176,9 +1174,9 @@ describe("decodeInstruction", () => {
     [
       " move usp,a3",
       [0x4e, 0x6b],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEFROMUSP,
+        operation: "MOVEFROMUSP",
         operands: [Implied(), AR(3)],
         extra: null,
       },
@@ -1186,9 +1184,9 @@ describe("decodeInstruction", () => {
     [
       " move d0,ccr",
       [0x44, 0xc0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVETOCCR,
+        operation: "MOVETOCCR",
         operands: [DR(0), Implied()],
         extra: null,
       },
@@ -1196,9 +1194,9 @@ describe("decodeInstruction", () => {
     [
       " move ccr,d0",
       [0x42, 0xc0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVEFROMCCR,
+        operation: "MOVEFROMCCR",
         operands: [Implied(), DR(0)],
         extra: null,
       },
@@ -1206,9 +1204,9 @@ describe("decodeInstruction", () => {
     [
       " pea (a0)",
       [0x48, 0x50],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.PEA,
+        operation: "PEA",
         operands: [ARIND(0), Implied()],
         extra: null,
       },
@@ -1216,9 +1214,9 @@ describe("decodeInstruction", () => {
     [
       " movem.w d0-d4/a0-a2,-(a4)",
       [0x48, 0xa4, 0xf8, 0xe0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.MOVEM,
+        operation: "MOVEM",
         operands: [REGLIST(0b1111100011100000), ARDEC(4)],
         extra: null,
       },
@@ -1226,9 +1224,9 @@ describe("decodeInstruction", () => {
     [
       " movem.l (a4)+,d0-d4/a0-a2",
       [0x4c, 0xdc, 0x07, 0x1f],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEM,
+        operation: "MOVEM",
         operands: [ARINC(4), REGLIST(0b0000011100011111)],
         extra: null,
       },
@@ -1236,9 +1234,9 @@ describe("decodeInstruction", () => {
     [
       " clr.b d0",
       [0x42, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.CLR,
+        operation: "CLR",
         operands: [Implied(), DR(0)],
         extra: null,
       },
@@ -1246,9 +1244,9 @@ describe("decodeInstruction", () => {
     [
       " clr.w (a0)+",
       [0x42, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.CLR,
+        operation: "CLR",
         operands: [Implied(), ARINC(0)],
         extra: null,
       },
@@ -1256,9 +1254,9 @@ describe("decodeInstruction", () => {
     [
       " clr.l (a4)",
       [0x42, 0x94],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.CLR,
+        operation: "CLR",
         operands: [Implied(), ARIND(4)],
         extra: null,
       },
@@ -1266,9 +1264,9 @@ describe("decodeInstruction", () => {
     [
       " neg.b d0",
       [0x44, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.NEG,
+        operation: "NEG",
         operands: [Implied(), DR(0)],
         extra: null,
       },
@@ -1276,9 +1274,9 @@ describe("decodeInstruction", () => {
     [
       " neg.w (a0)+",
       [0x44, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.NEG,
+        operation: "NEG",
         operands: [Implied(), ARINC(0)],
         extra: null,
       },
@@ -1286,9 +1284,9 @@ describe("decodeInstruction", () => {
     [
       " neg.l (a4)",
       [0x44, 0x94],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.NEG,
+        operation: "NEG",
         operands: [Implied(), ARIND(4)],
         extra: null,
       },
@@ -1296,9 +1294,9 @@ describe("decodeInstruction", () => {
     [
       " negx.b d0",
       [0x40, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.NEGX,
+        operation: "NEGX",
         operands: [Implied(), DR(0)],
         extra: null,
       },
@@ -1306,9 +1304,9 @@ describe("decodeInstruction", () => {
     [
       " negx.w (a0)+",
       [0x40, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.NEGX,
+        operation: "NEGX",
         operands: [Implied(), ARINC(0)],
         extra: null,
       },
@@ -1316,9 +1314,9 @@ describe("decodeInstruction", () => {
     [
       " negx.l (a4)",
       [0x40, 0x94],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.NEGX,
+        operation: "NEGX",
         operands: [Implied(), ARIND(4)],
         extra: null,
       },
@@ -1326,9 +1324,9 @@ describe("decodeInstruction", () => {
     [
       " not.b d0",
       [0x46, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.NOT,
+        operation: "NOT",
         operands: [Implied(), DR(0)],
         extra: null,
       },
@@ -1336,9 +1334,9 @@ describe("decodeInstruction", () => {
     [
       " not.w (a0)+",
       [0x46, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.NOT,
+        operation: "NOT",
         operands: [Implied(), ARINC(0)],
         extra: null,
       },
@@ -1346,9 +1344,9 @@ describe("decodeInstruction", () => {
     [
       " not.l (a4)",
       [0x46, 0x94],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.NOT,
+        operation: "NOT",
         operands: [Implied(), ARIND(4)],
         extra: null,
       },
@@ -1356,9 +1354,9 @@ describe("decodeInstruction", () => {
     [
       " tst.b d0",
       [0x4a, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.TST,
+        operation: "TST",
         operands: [Implied(), DR(0)],
         extra: null,
       },
@@ -1366,9 +1364,9 @@ describe("decodeInstruction", () => {
     [
       " tst.w (a0)+",
       [0x4a, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.TST,
+        operation: "TST",
         operands: [Implied(), ARINC(0)],
         extra: null,
       },
@@ -1376,9 +1374,9 @@ describe("decodeInstruction", () => {
     [
       " tst.l (a4)",
       [0x4a, 0x94],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.TST,
+        operation: "TST",
         operands: [Implied(), ARIND(4)],
         extra: null,
       },
@@ -1386,9 +1384,9 @@ describe("decodeInstruction", () => {
     [
       " chk.w (a4),d2",
       [0x45, 0x94],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.CHK,
+        operation: "CHK",
         operands: [ARIND(4), DR(2)],
         extra: null,
       },
@@ -1396,9 +1394,9 @@ describe("decodeInstruction", () => {
     [
       " chk.l (a4),d2",
       [0x45, 0x14],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.CHK,
+        operation: "CHK",
         operands: [ARIND(4), DR(2)],
         extra: null,
       },
@@ -1406,9 +1404,9 @@ describe("decodeInstruction", () => {
     [
       " bfchg (a4){12:7}",
       [0xea, 0xd4, 0x03, 0x07],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFCHG,
+        operation: "BFCHG",
         operands: [null, ARIND(4)],
         extra: Bitfield(STATIC(12), STATIC(7)),
       },
@@ -1416,9 +1414,9 @@ describe("decodeInstruction", () => {
     [
       " bfchg (a4){d2:7}",
       [0xea, 0xd4, 0x08, 0x87],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFCHG,
+        operation: "BFCHG",
         operands: [null, ARIND(4)],
         extra: Bitfield(DYNAMIC(2), STATIC(7)),
       },
@@ -1426,9 +1424,9 @@ describe("decodeInstruction", () => {
     [
       " bfchg (a4){d2:d3}",
       [0xea, 0xd4, 0x08, 0xa3],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFCHG,
+        operation: "BFCHG",
         operands: [null, ARIND(4)],
         extra: Bitfield(DYNAMIC(2), DYNAMIC(3)),
       },
@@ -1436,9 +1434,9 @@ describe("decodeInstruction", () => {
     [
       " bfclr (a4){12:7}",
       [0xec, 0xd4, 0x03, 0x07],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFCLR,
+        operation: "BFCLR",
         operands: [null, ARIND(4)],
         extra: Bitfield(STATIC(12), STATIC(7)),
       },
@@ -1446,9 +1444,9 @@ describe("decodeInstruction", () => {
     [
       " bfexts (a4){12:7},d1",
       [0xeb, 0xd4, 0x13, 0x07],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFEXTS,
+        operation: "BFEXTS",
         operands: [ARIND(4), DR(1)],
         extra: Bitfield(STATIC(12), STATIC(7)),
       },
@@ -1456,9 +1454,9 @@ describe("decodeInstruction", () => {
     [
       " bfextu (a4){12:7},d1",
       [0xe9, 0xd4, 0x13, 0x07],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFEXTU,
+        operation: "BFEXTU",
         operands: [ARIND(4), DR(1)],
         extra: Bitfield(STATIC(12), STATIC(7)),
       },
@@ -1466,9 +1464,9 @@ describe("decodeInstruction", () => {
     [
       " bfffo (a4){12:7},d1",
       [0xed, 0xd4, 0x13, 0x07],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFFFO,
+        operation: "BFFFO",
         operands: [ARIND(4), DR(1)],
         extra: Bitfield(STATIC(12), STATIC(7)),
       },
@@ -1476,9 +1474,9 @@ describe("decodeInstruction", () => {
     [
       " bfins d1,(a4){12:7}",
       [0xef, 0xd4, 0x13, 0x07],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFINS,
+        operation: "BFINS",
         operands: [DR(1), ARIND(4)],
         extra: Bitfield(STATIC(12), STATIC(7)),
       },
@@ -1486,9 +1484,9 @@ describe("decodeInstruction", () => {
     [
       " bfset (a4){12:7}",
       [0xee, 0xd4, 0x03, 0x07],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFSET,
+        operation: "BFSET",
         operands: [null, ARIND(4)],
         extra: Bitfield(STATIC(12), STATIC(7)),
       },
@@ -1496,9 +1494,9 @@ describe("decodeInstruction", () => {
     [
       " bftst (a4){12:7}",
       [0xe8, 0xd4, 0x03, 0x07],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.BFTST,
+        operation: "BFTST",
         operands: [null, ARIND(4)],
         extra: Bitfield(STATIC(12), STATIC(7)),
       },
@@ -1506,9 +1504,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbf d3,.self",
       [0x51, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_F),
       },
@@ -1516,9 +1514,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbhi d3,.self",
       [0x52, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_HI),
       },
@@ -1526,9 +1524,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbls d3,.self",
       [0x53, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_LS),
       },
@@ -1536,9 +1534,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbcc d3,.self",
       [0x54, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_CC),
       },
@@ -1546,9 +1544,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbhs d3,.self",
       [0x54, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_CC),
       },
@@ -1556,9 +1554,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbcs d3,.self",
       [0x55, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_CS),
       },
@@ -1566,9 +1564,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dblo d3,.self",
       [0x55, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_CS),
       },
@@ -1576,9 +1574,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbne d3,.self",
       [0x56, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_NE),
       },
@@ -1586,9 +1584,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbeq d3,.self",
       [0x57, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_EQ),
       },
@@ -1596,9 +1594,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbvc d3,.self",
       [0x58, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_VC),
       },
@@ -1606,9 +1604,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbvs d3,.self",
       [0x59, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_VS),
       },
@@ -1616,9 +1614,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbpl d3,.self",
       [0x5a, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_PL),
       },
@@ -1626,9 +1624,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbmi d3,.self",
       [0x5b, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_MI),
       },
@@ -1636,9 +1634,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbge d3,.self",
       [0x5c, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_GE),
       },
@@ -1646,9 +1644,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dblt d3,.self",
       [0x5d, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_LT),
       },
@@ -1656,9 +1654,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dbgt d3,.self",
       [0x5e, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_GT),
       },
@@ -1666,9 +1664,9 @@ describe("decodeInstruction", () => {
     [
       " .self: dble d3,.self",
       [0x5f, 0xcb, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.DBCC,
+        operation: "DBCC",
         operands: [DR(3), PCDISP(2, simpleDisp(-2))],
         extra: Condition(ConditionCode.CC_LE),
       },
@@ -1676,9 +1674,9 @@ describe("decodeInstruction", () => {
     [
       " addq.b #1,d0",
       [0x52, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ADDQ,
+        operation: "ADDQ",
         operands: [IMM8(1), DR(0)],
         extra: null,
       },
@@ -1686,9 +1684,9 @@ describe("decodeInstruction", () => {
     [
       " addq.w #7,a0",
       [0x5e, 0x48],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ADDQ,
+        operation: "ADDQ",
         operands: [IMM8(7), AR(0)],
         extra: null,
       },
@@ -1696,9 +1694,9 @@ describe("decodeInstruction", () => {
     [
       " addq.l #8,d0",
       [0x50, 0x80],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ADDQ,
+        operation: "ADDQ",
         operands: [IMM8(8), DR(0)],
         extra: null,
       },
@@ -1706,9 +1704,9 @@ describe("decodeInstruction", () => {
     [
       " subq.b #1,d0",
       [0x53, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.SUBQ,
+        operation: "SUBQ",
         operands: [IMM8(1), DR(0)],
         extra: null,
       },
@@ -1716,9 +1714,9 @@ describe("decodeInstruction", () => {
     [
       " subq.w #7,a0",
       [0x5f, 0x48],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.SUBQ,
+        operation: "SUBQ",
         operands: [IMM8(7), AR(0)],
         extra: null,
       },
@@ -1726,9 +1724,9 @@ describe("decodeInstruction", () => {
     [
       " subq.l #8,d0",
       [0x51, 0x80],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.SUBQ,
+        operation: "SUBQ",
         operands: [IMM8(8), DR(0)],
         extra: null,
       },
@@ -1736,9 +1734,9 @@ describe("decodeInstruction", () => {
     [
       " trapne",
       [0x56, 0xfc],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.TRAPCC,
+        operation: "TRAPCC",
         operands: [null, null],
         extra: Condition(ConditionCode.CC_NE),
       },
@@ -1746,9 +1744,9 @@ describe("decodeInstruction", () => {
     [
       " trapne.w #1234",
       [0x56, 0xfa, 0x04, 0xd2],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.TRAPCC,
+        operation: "TRAPCC",
         operands: [IMM16(1234), null],
         extra: Condition(ConditionCode.CC_NE),
       },
@@ -1756,9 +1754,9 @@ describe("decodeInstruction", () => {
     [
       " trapne.l #$12345678",
       [0x56, 0xfb, 0x12, 0x34, 0x56, 0x78],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.TRAPCC,
+        operation: "TRAPCC",
         operands: [IMM32(0x12345678), null],
         extra: Condition(ConditionCode.CC_NE),
       },
@@ -1766,9 +1764,9 @@ describe("decodeInstruction", () => {
     [
       " sne (a0)",
       [0x56, 0xd0],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.SCC,
+        operation: "SCC",
         operands: [Implied(), ARIND(0)],
         extra: Condition(ConditionCode.CC_NE),
       },
@@ -1776,9 +1774,9 @@ describe("decodeInstruction", () => {
     [
       " addx.b d0,d1",
       [0xd3, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ADDX,
+        operation: "ADDX",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1786,9 +1784,9 @@ describe("decodeInstruction", () => {
     [
       " addx.w d0,d1",
       [0xd3, 0x40],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ADDX,
+        operation: "ADDX",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1796,9 +1794,9 @@ describe("decodeInstruction", () => {
     [
       " addx.l d0,d1",
       [0xd3, 0x80],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ADDX,
+        operation: "ADDX",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1806,9 +1804,9 @@ describe("decodeInstruction", () => {
     [
       " addx.b -(a2),-(a3)",
       [0xd7, 0x0a],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ADDX,
+        operation: "ADDX",
         operands: [ARDEC(2), ARDEC(3)],
         extra: null,
       },
@@ -1816,9 +1814,9 @@ describe("decodeInstruction", () => {
     [
       " addx.w -(a2),-(a3)",
       [0xd7, 0x4a],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ADDX,
+        operation: "ADDX",
         operands: [ARDEC(2), ARDEC(3)],
         extra: null,
       },
@@ -1826,9 +1824,9 @@ describe("decodeInstruction", () => {
     [
       " addx.l -(a2),-(a3)",
       [0xd7, 0x8a],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ADDX,
+        operation: "ADDX",
         operands: [ARDEC(2), ARDEC(3)],
         extra: null,
       },
@@ -1836,9 +1834,9 @@ describe("decodeInstruction", () => {
     [
       " add.b (a2),d0",
       [0xd0, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ADD,
+        operation: "ADD",
         operands: [ARIND(2), DR(0)],
         extra: null,
       },
@@ -1846,9 +1844,9 @@ describe("decodeInstruction", () => {
     [
       " add.w (a2),d0",
       [0xd0, 0x52],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ADD,
+        operation: "ADD",
         operands: [ARIND(2), DR(0)],
         extra: null,
       },
@@ -1856,9 +1854,9 @@ describe("decodeInstruction", () => {
     [
       " add.l (a2),d0",
       [0xd0, 0x92],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ADD,
+        operation: "ADD",
         operands: [ARIND(2), DR(0)],
         extra: null,
       },
@@ -1866,9 +1864,9 @@ describe("decodeInstruction", () => {
     [
       " add.b d3,(a2)",
       [0xd7, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ADD,
+        operation: "ADD",
         operands: [DR(3), ARIND(2)],
         extra: null,
       },
@@ -1876,9 +1874,9 @@ describe("decodeInstruction", () => {
     [
       " add.w d3,(a2)",
       [0xd7, 0x52],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ADD,
+        operation: "ADD",
         operands: [DR(3), ARIND(2)],
         extra: null,
       },
@@ -1886,9 +1884,9 @@ describe("decodeInstruction", () => {
     [
       " add.l d3,(a2)",
       [0xd7, 0x92],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ADD,
+        operation: "ADD",
         operands: [DR(3), ARIND(2)],
         extra: null,
       },
@@ -1896,9 +1894,9 @@ describe("decodeInstruction", () => {
     [
       " subx.b d0,d1",
       [0x93, 0x00],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.SUBX,
+        operation: "SUBX",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1906,9 +1904,9 @@ describe("decodeInstruction", () => {
     [
       " subx.w d0,d1",
       [0x93, 0x40],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.SUBX,
+        operation: "SUBX",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1916,9 +1914,9 @@ describe("decodeInstruction", () => {
     [
       " subx.l d0,d1",
       [0x93, 0x80],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.SUBX,
+        operation: "SUBX",
         operands: [DR(0), DR(1)],
         extra: null,
       },
@@ -1926,9 +1924,9 @@ describe("decodeInstruction", () => {
     [
       " subx.b -(a2),-(a3)",
       [0x97, 0x0a],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.SUBX,
+        operation: "SUBX",
         operands: [ARDEC(2), ARDEC(3)],
         extra: null,
       },
@@ -1936,9 +1934,9 @@ describe("decodeInstruction", () => {
     [
       " subx.w -(a2),-(a3)",
       [0x97, 0x4a],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.SUBX,
+        operation: "SUBX",
         operands: [ARDEC(2), ARDEC(3)],
         extra: null,
       },
@@ -1946,9 +1944,9 @@ describe("decodeInstruction", () => {
     [
       " subx.l -(a2),-(a3)",
       [0x97, 0x8a],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.SUBX,
+        operation: "SUBX",
         operands: [ARDEC(2), ARDEC(3)],
         extra: null,
       },
@@ -1956,9 +1954,9 @@ describe("decodeInstruction", () => {
     [
       " sub.b (a2),d0",
       [0x90, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.SUB,
+        operation: "SUB",
         operands: [ARIND(2), DR(0)],
         extra: null,
       },
@@ -1966,9 +1964,9 @@ describe("decodeInstruction", () => {
     [
       " sub.w (a2),d0",
       [0x90, 0x52],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.SUB,
+        operation: "SUB",
         operands: [ARIND(2), DR(0)],
         extra: null,
       },
@@ -1976,9 +1974,9 @@ describe("decodeInstruction", () => {
     [
       " sub.l (a2),d0",
       [0x90, 0x92],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.SUB,
+        operation: "SUB",
         operands: [ARIND(2), DR(0)],
         extra: null,
       },
@@ -1986,9 +1984,9 @@ describe("decodeInstruction", () => {
     [
       " sub.b d3,(a2)",
       [0x97, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.SUB,
+        operation: "SUB",
         operands: [DR(3), ARIND(2)],
         extra: null,
       },
@@ -1996,9 +1994,9 @@ describe("decodeInstruction", () => {
     [
       " sub.w d3,(a2)",
       [0x97, 0x52],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.SUB,
+        operation: "SUB",
         operands: [DR(3), ARIND(2)],
         extra: null,
       },
@@ -2006,9 +2004,9 @@ describe("decodeInstruction", () => {
     [
       " sub.l d3,(a2)",
       [0x97, 0x92],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.SUB,
+        operation: "SUB",
         operands: [DR(3), ARIND(2)],
         extra: null,
       },
@@ -2016,9 +2014,9 @@ describe("decodeInstruction", () => {
     [
       " suba.w d3,a2",
       [0x94, 0xc3],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.SUBA,
+        operation: "SUBA",
         operands: [DR(3), AR(2)],
         extra: null,
       },
@@ -2026,9 +2024,9 @@ describe("decodeInstruction", () => {
     [
       " suba.l d3,a2",
       [0x95, 0xc3],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.SUBA,
+        operation: "SUBA",
         operands: [DR(3), AR(2)],
         extra: null,
       },
@@ -2036,9 +2034,9 @@ describe("decodeInstruction", () => {
     [
       " cmpa.w (a1),a2",
       [0xb4, 0xd1],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.CMPA,
+        operation: "CMPA",
         operands: [ARIND(1), AR(2)],
         extra: null,
       },
@@ -2046,9 +2044,9 @@ describe("decodeInstruction", () => {
     [
       " cmpa.l (a1),a2",
       [0xb5, 0xd1],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.CMPA,
+        operation: "CMPA",
         operands: [ARIND(1), AR(2)],
         extra: null,
       },
@@ -2056,9 +2054,9 @@ describe("decodeInstruction", () => {
     [
       " cmpm.b (a0)+,(a2)+",
       [0xb5, 0x08],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.CMPM,
+        operation: "CMPM",
         operands: [ARINC(0), ARINC(2)],
         extra: null,
       },
@@ -2066,9 +2064,9 @@ describe("decodeInstruction", () => {
     [
       " cmpm.w (a0)+,(a2)+",
       [0xb5, 0x48],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.CMPM,
+        operation: "CMPM",
         operands: [ARINC(0), ARINC(2)],
         extra: null,
       },
@@ -2076,9 +2074,9 @@ describe("decodeInstruction", () => {
     [
       " cmpm.l (a0)+,(a2)+",
       [0xb5, 0x88],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.CMPM,
+        operation: "CMPM",
         operands: [ARINC(0), ARINC(2)],
         extra: null,
       },
@@ -2086,9 +2084,9 @@ describe("decodeInstruction", () => {
     [
       " cmp.b (a0)+,d7",
       [0xbe, 0x18],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.CMP,
+        operation: "CMP",
         operands: [ARINC(0), DR(7)],
         extra: null,
       },
@@ -2096,9 +2094,9 @@ describe("decodeInstruction", () => {
     [
       " cmp.w (a0)+,d7",
       [0xbe, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.CMP,
+        operation: "CMP",
         operands: [ARINC(0), DR(7)],
         extra: null,
       },
@@ -2106,9 +2104,9 @@ describe("decodeInstruction", () => {
     [
       " cmp.l (a0)+,d7",
       [0xbe, 0x98],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.CMP,
+        operation: "CMP",
         operands: [ARINC(0), DR(7)],
         extra: null,
       },
@@ -2116,9 +2114,9 @@ describe("decodeInstruction", () => {
     [
       " eor.b d7,(a0)+",
       [0xbf, 0x18],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.EOR,
+        operation: "EOR",
         operands: [DR(7), ARINC(0)],
         extra: null,
       },
@@ -2126,9 +2124,9 @@ describe("decodeInstruction", () => {
     [
       " eor.w d7,(a0)+",
       [0xbf, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.EOR,
+        operation: "EOR",
         operands: [DR(7), ARINC(0)],
         extra: null,
       },
@@ -2136,9 +2134,9 @@ describe("decodeInstruction", () => {
     [
       " eor.l d7,-(a0)",
       [0xbf, 0xa0],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.EOR,
+        operation: "EOR",
         operands: [DR(7), ARDEC(0)],
         extra: null,
       },
@@ -2146,9 +2144,9 @@ describe("decodeInstruction", () => {
     [
       " lab:\n   bra.s lab",
       [0x60, 0xfe],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.BRA,
+        operation: "BRA",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: null,
       },
@@ -2156,9 +2154,9 @@ describe("decodeInstruction", () => {
     [
       " lab:\n   bra.w lab",
       [0x60, 0x00, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.BRA,
+        operation: "BRA",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: null,
       },
@@ -2166,9 +2164,9 @@ describe("decodeInstruction", () => {
     [
       " lab:\n   bra.l lab",
       [0x60, 0xff, 0xff, 0xff, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.BRA,
+        operation: "BRA",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: null,
       },
@@ -2176,9 +2174,9 @@ describe("decodeInstruction", () => {
     [
       " lab:\n   bsr.s lab",
       [0x61, 0xfe],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.BSR,
+        operation: "BSR",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: null,
       },
@@ -2186,9 +2184,9 @@ describe("decodeInstruction", () => {
     [
       " lab:\n   bsr.w lab",
       [0x61, 0x00, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.BSR,
+        operation: "BSR",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: null,
       },
@@ -2196,9 +2194,9 @@ describe("decodeInstruction", () => {
     [
       " lab:\n   bsr.l lab",
       [0x61, 0xff, 0xff, 0xff, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.BSR,
+        operation: "BSR",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: null,
       },
@@ -2206,9 +2204,9 @@ describe("decodeInstruction", () => {
     [
       " lab:\n   bne.s lab",
       [0x66, 0xfe],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.BCC,
+        operation: "BCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: Condition(ConditionCode.CC_NE),
       },
@@ -2216,9 +2214,9 @@ describe("decodeInstruction", () => {
     [
       "   beq.w lab",
       [0x67, 0x00, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.BCC,
+        operation: "BCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: Condition(ConditionCode.CC_EQ),
       },
@@ -2226,9 +2224,9 @@ describe("decodeInstruction", () => {
     [
       " lab:\n   bcs.l lab",
       [0x65, 0xff, 0xff, 0xff, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.BCC,
+        operation: "BCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: Condition(ConditionCode.CC_CS),
       },
@@ -2236,9 +2234,9 @@ describe("decodeInstruction", () => {
     [
       " pack d0,d1,#12",
       [0x83, 0x40, 0x00, 0x0c],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.PACK,
+        operation: "PACK",
         operands: [DR(0), DR(1)],
         extra: PackAdjustment(12),
       },
@@ -2246,9 +2244,9 @@ describe("decodeInstruction", () => {
     [
       " unpk d0,d1,#12",
       [0x83, 0x80, 0x00, 0x0c],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.UNPK,
+        operation: "UNPK",
         operands: [DR(0), DR(1)],
         extra: PackAdjustment(12),
       },
@@ -2256,9 +2254,9 @@ describe("decodeInstruction", () => {
     [
       " pack -(a0),-(a1),#37",
       [0x83, 0x48, 0x00, 0x25],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.PACK,
+        operation: "PACK",
         operands: [ARDEC(0), ARDEC(1)],
         extra: PackAdjustment(37),
       },
@@ -2266,9 +2264,9 @@ describe("decodeInstruction", () => {
     [
       " unpk -(a0),-(a1),#37",
       [0x83, 0x88, 0x00, 0x25],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.UNPK,
+        operation: "UNPK",
         operands: [ARDEC(0), ARDEC(1)],
         extra: PackAdjustment(37),
       },
@@ -2276,9 +2274,9 @@ describe("decodeInstruction", () => {
     [
       " sbcd -(a0),-(a1)",
       [0x83, 0x08],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.SBCD,
+        operation: "SBCD",
         operands: [ARDEC(0), ARDEC(1)],
         extra: null,
       },
@@ -2286,9 +2284,9 @@ describe("decodeInstruction", () => {
     [
       " sbcd d3,d4",
       [0x89, 0x03],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.SBCD,
+        operation: "SBCD",
         operands: [DR(3), DR(4)],
         extra: null,
       },
@@ -2296,9 +2294,9 @@ describe("decodeInstruction", () => {
     [
       " or.b (a0)+,d0",
       [0x80, 0x18],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.OR,
+        operation: "OR",
         operands: [ARINC(0), DR(0)],
         extra: null,
       },
@@ -2306,9 +2304,9 @@ describe("decodeInstruction", () => {
     [
       " or.w (a0)+,d0",
       [0x80, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.OR,
+        operation: "OR",
         operands: [ARINC(0), DR(0)],
         extra: null,
       },
@@ -2316,9 +2314,9 @@ describe("decodeInstruction", () => {
     [
       " or.l (a0)+,d0",
       [0x80, 0x98],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.OR,
+        operation: "OR",
         operands: [ARINC(0), DR(0)],
         extra: null,
       },
@@ -2326,9 +2324,9 @@ describe("decodeInstruction", () => {
     [
       " or.b d0,(a0)+",
       [0x81, 0x18],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.OR,
+        operation: "OR",
         operands: [DR(0), ARINC(0)],
         extra: null,
       },
@@ -2336,9 +2334,9 @@ describe("decodeInstruction", () => {
     [
       " or.w d0,(a0)+",
       [0x81, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.OR,
+        operation: "OR",
         operands: [DR(0), ARINC(0)],
         extra: null,
       },
@@ -2346,9 +2344,9 @@ describe("decodeInstruction", () => {
     [
       " or.l d0,(a0)+",
       [0x81, 0x98],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.OR,
+        operation: "OR",
         operands: [DR(0), ARINC(0)],
         extra: null,
       },
@@ -2356,9 +2354,9 @@ describe("decodeInstruction", () => {
     [
       " exg d0,d5",
       [0xc1, 0x45],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.EXG,
+        operation: "EXG",
         operands: [DR(0), DR(5)],
         extra: null,
       },
@@ -2366,9 +2364,9 @@ describe("decodeInstruction", () => {
     [
       " exg a0,a5",
       [0xc1, 0x4d],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.EXG,
+        operation: "EXG",
         operands: [AR(0), AR(5)],
         extra: null,
       },
@@ -2376,9 +2374,9 @@ describe("decodeInstruction", () => {
     [
       " exg d3,a5",
       [0xc7, 0x8d],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.EXG,
+        operation: "EXG",
         operands: [DR(3), AR(5)],
         extra: null,
       },
@@ -2386,9 +2384,9 @@ describe("decodeInstruction", () => {
     [
       " and.b (a0)+,d0",
       [0xc0, 0x18],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.AND,
+        operation: "AND",
         operands: [ARINC(0), DR(0)],
         extra: null,
       },
@@ -2396,9 +2394,9 @@ describe("decodeInstruction", () => {
     [
       " and.w (a0)+,d0",
       [0xc0, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.AND,
+        operation: "AND",
         operands: [ARINC(0), DR(0)],
         extra: null,
       },
@@ -2406,9 +2404,9 @@ describe("decodeInstruction", () => {
     [
       " and.l (a0)+,d0",
       [0xc0, 0x98],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.AND,
+        operation: "AND",
         operands: [ARINC(0), DR(0)],
         extra: null,
       },
@@ -2416,9 +2414,9 @@ describe("decodeInstruction", () => {
     [
       " and.b d0,(a0)+",
       [0xc1, 0x18],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.AND,
+        operation: "AND",
         operands: [DR(0), ARINC(0)],
         extra: null,
       },
@@ -2426,9 +2424,9 @@ describe("decodeInstruction", () => {
     [
       " and.w d0,(a0)+",
       [0xc1, 0x58],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.AND,
+        operation: "AND",
         operands: [DR(0), ARINC(0)],
         extra: null,
       },
@@ -2436,9 +2434,9 @@ describe("decodeInstruction", () => {
     [
       " and.l d0,(a0)+",
       [0xc1, 0x98],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.AND,
+        operation: "AND",
         operands: [DR(0), ARINC(0)],
         extra: null,
       },
@@ -2446,9 +2444,9 @@ describe("decodeInstruction", () => {
     [
       " asl.b #3,d7",
       [0xe7, 0x07],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ASL,
+        operation: "ASL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2456,9 +2454,9 @@ describe("decodeInstruction", () => {
     [
       " asl.w #3,d7",
       [0xe7, 0x47],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ASL,
+        operation: "ASL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2466,9 +2464,9 @@ describe("decodeInstruction", () => {
     [
       " asl.l #3,d7",
       [0xe7, 0x87],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ASL,
+        operation: "ASL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2476,9 +2474,9 @@ describe("decodeInstruction", () => {
     [
       " asr.b #3,d7",
       [0xe6, 0x07],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ASR,
+        operation: "ASR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2486,9 +2484,9 @@ describe("decodeInstruction", () => {
     [
       " asr.w #3,d7",
       [0xe6, 0x47],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ASR,
+        operation: "ASR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2496,9 +2494,9 @@ describe("decodeInstruction", () => {
     [
       " asr.l #3,d7",
       [0xe6, 0x87],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ASR,
+        operation: "ASR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2506,9 +2504,9 @@ describe("decodeInstruction", () => {
     [
       " asl.b d1,d7",
       [0xe3, 0x27],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ASL,
+        operation: "ASL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2516,9 +2514,9 @@ describe("decodeInstruction", () => {
     [
       " asl.w d1,d7",
       [0xe3, 0x67],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ASL,
+        operation: "ASL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2526,9 +2524,9 @@ describe("decodeInstruction", () => {
     [
       " asl.l d1,d7",
       [0xe3, 0xa7],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ASL,
+        operation: "ASL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2536,9 +2534,9 @@ describe("decodeInstruction", () => {
     [
       " asr.b d1,d7",
       [0xe2, 0x27],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ASR,
+        operation: "ASR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2546,9 +2544,9 @@ describe("decodeInstruction", () => {
     [
       " asr.w d1,d7",
       [0xe2, 0x67],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ASR,
+        operation: "ASR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2556,9 +2554,9 @@ describe("decodeInstruction", () => {
     [
       " asr.l d1,d7",
       [0xe2, 0xa7],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ASR,
+        operation: "ASR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2566,9 +2564,9 @@ describe("decodeInstruction", () => {
     [
       " asl.w (a0)",
       [0xe1, 0xd0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ASL,
+        operation: "ASL",
         operands: [Implied(), ARIND(0)],
         extra: null,
       },
@@ -2576,9 +2574,9 @@ describe("decodeInstruction", () => {
     [
       " asr.w (a0)",
       [0xe0, 0xd0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ASR,
+        operation: "ASR",
         operands: [Implied(), ARIND(0)],
         extra: null,
       },
@@ -2586,9 +2584,9 @@ describe("decodeInstruction", () => {
     [
       " lsl.b #3,d7",
       [0xe7, 0x0f],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.LSL,
+        operation: "LSL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2596,9 +2594,9 @@ describe("decodeInstruction", () => {
     [
       " lsl.w #3,d7",
       [0xe7, 0x4f],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.LSL,
+        operation: "LSL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2606,9 +2604,9 @@ describe("decodeInstruction", () => {
     [
       " lsl.l #3,d7",
       [0xe7, 0x8f],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.LSL,
+        operation: "LSL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2616,9 +2614,9 @@ describe("decodeInstruction", () => {
     [
       " lsr.b #3,d7",
       [0xe6, 0x0f],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.LSR,
+        operation: "LSR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2626,9 +2624,9 @@ describe("decodeInstruction", () => {
     [
       " lsr.w #3,d7",
       [0xe6, 0x4f],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.LSR,
+        operation: "LSR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2636,9 +2634,9 @@ describe("decodeInstruction", () => {
     [
       " lsr.l #3,d7",
       [0xe6, 0x8f],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.LSR,
+        operation: "LSR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2646,9 +2644,9 @@ describe("decodeInstruction", () => {
     [
       " lsl.b d1,d7",
       [0xe3, 0x2f],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.LSL,
+        operation: "LSL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2656,9 +2654,9 @@ describe("decodeInstruction", () => {
     [
       " lsl.w d1,d7",
       [0xe3, 0x6f],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.LSL,
+        operation: "LSL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2666,9 +2664,9 @@ describe("decodeInstruction", () => {
     [
       " lsl.l d1,d7",
       [0xe3, 0xaf],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.LSL,
+        operation: "LSL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2676,9 +2674,9 @@ describe("decodeInstruction", () => {
     [
       " lsr.b d1,d7",
       [0xe2, 0x2f],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.LSR,
+        operation: "LSR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2686,9 +2684,9 @@ describe("decodeInstruction", () => {
     [
       " lsr.w d1,d7",
       [0xe2, 0x6f],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.LSR,
+        operation: "LSR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2696,9 +2694,9 @@ describe("decodeInstruction", () => {
     [
       " lsr.l d1,d7",
       [0xe2, 0xaf],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.LSR,
+        operation: "LSR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2706,9 +2704,9 @@ describe("decodeInstruction", () => {
     [
       " lsl.w (a0)",
       [0xe3, 0xd0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.LSL,
+        operation: "LSL",
         operands: [Implied(), ARIND(0)],
         extra: null,
       },
@@ -2716,9 +2714,9 @@ describe("decodeInstruction", () => {
     [
       " lsr.w (a0)",
       [0xe2, 0xd0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.LSR,
+        operation: "LSR",
         operands: [Implied(), ARIND(0)],
         extra: null,
       },
@@ -2726,9 +2724,9 @@ describe("decodeInstruction", () => {
     [
       " roxl.b #3,d7",
       [0xe7, 0x17],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ROXL,
+        operation: "ROXL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2736,9 +2734,9 @@ describe("decodeInstruction", () => {
     [
       " roxl.w #3,d7",
       [0xe7, 0x57],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROXL,
+        operation: "ROXL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2746,9 +2744,9 @@ describe("decodeInstruction", () => {
     [
       " roxl.l #3,d7",
       [0xe7, 0x97],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ROXL,
+        operation: "ROXL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2756,9 +2754,9 @@ describe("decodeInstruction", () => {
     [
       " roxr.b #3,d7",
       [0xe6, 0x17],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ROXR,
+        operation: "ROXR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2766,9 +2764,9 @@ describe("decodeInstruction", () => {
     [
       " roxr.w #3,d7",
       [0xe6, 0x57],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROXR,
+        operation: "ROXR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2776,9 +2774,9 @@ describe("decodeInstruction", () => {
     [
       " roxr.l #3,d7",
       [0xe6, 0x97],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ROXR,
+        operation: "ROXR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2786,9 +2784,9 @@ describe("decodeInstruction", () => {
     [
       " roxl.b d1,d7",
       [0xe3, 0x37],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ROXL,
+        operation: "ROXL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2796,9 +2794,9 @@ describe("decodeInstruction", () => {
     [
       " roxl.w d1,d7",
       [0xe3, 0x77],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROXL,
+        operation: "ROXL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2806,9 +2804,9 @@ describe("decodeInstruction", () => {
     [
       " roxl.l d1,d7",
       [0xe3, 0xb7],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ROXL,
+        operation: "ROXL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2816,9 +2814,9 @@ describe("decodeInstruction", () => {
     [
       " roxr.b d1,d7",
       [0xe2, 0x37],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ROXR,
+        operation: "ROXR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2826,9 +2824,9 @@ describe("decodeInstruction", () => {
     [
       " roxr.w d1,d7",
       [0xe2, 0x77],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROXR,
+        operation: "ROXR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2836,9 +2834,9 @@ describe("decodeInstruction", () => {
     [
       " roxr.l d1,d7",
       [0xe2, 0xb7],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ROXR,
+        operation: "ROXR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2846,9 +2844,9 @@ describe("decodeInstruction", () => {
     [
       " roxl.w (a0)",
       [0xe5, 0xd0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROXL,
+        operation: "ROXL",
         operands: [Implied(), ARIND(0)],
         extra: null,
       },
@@ -2856,9 +2854,9 @@ describe("decodeInstruction", () => {
     [
       " roxr.w (a0)",
       [0xe4, 0xd0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROXR,
+        operation: "ROXR",
         operands: [Implied(), ARIND(0)],
         extra: null,
       },
@@ -2866,9 +2864,9 @@ describe("decodeInstruction", () => {
     [
       " rol.b #3,d7",
       [0xe7, 0x1f],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ROL,
+        operation: "ROL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2876,9 +2874,9 @@ describe("decodeInstruction", () => {
     [
       " rol.w #3,d7",
       [0xe7, 0x5f],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROL,
+        operation: "ROL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2886,9 +2884,9 @@ describe("decodeInstruction", () => {
     [
       " rol.l #3,d7",
       [0xe7, 0x9f],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ROL,
+        operation: "ROL",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2896,9 +2894,9 @@ describe("decodeInstruction", () => {
     [
       " ror.b #3,d7",
       [0xe6, 0x1f],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ROR,
+        operation: "ROR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2906,9 +2904,9 @@ describe("decodeInstruction", () => {
     [
       " ror.w #3,d7",
       [0xe6, 0x5f],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROR,
+        operation: "ROR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2916,9 +2914,9 @@ describe("decodeInstruction", () => {
     [
       " ror.l #3,d7",
       [0xe6, 0x9f],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ROR,
+        operation: "ROR",
         operands: [IMM8(3), DR(7)],
         extra: null,
       },
@@ -2926,9 +2924,9 @@ describe("decodeInstruction", () => {
     [
       " rol.b d1,d7",
       [0xe3, 0x3f],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ROL,
+        operation: "ROL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2936,9 +2934,9 @@ describe("decodeInstruction", () => {
     [
       " rol.w d1,d7",
       [0xe3, 0x7f],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROL,
+        operation: "ROL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2946,9 +2944,9 @@ describe("decodeInstruction", () => {
     [
       " rol.l d1,d7",
       [0xe3, 0xbf],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ROL,
+        operation: "ROL",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2956,9 +2954,9 @@ describe("decodeInstruction", () => {
     [
       " ror.b d1,d7",
       [0xe2, 0x3f],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.ROR,
+        operation: "ROR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2966,9 +2964,9 @@ describe("decodeInstruction", () => {
     [
       " ror.w d1,d7",
       [0xe2, 0x7f],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROR,
+        operation: "ROR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2976,9 +2974,9 @@ describe("decodeInstruction", () => {
     [
       " ror.l d1,d7",
       [0xe2, 0xbf],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ROR,
+        operation: "ROR",
         operands: [DR(1), DR(7)],
         extra: null,
       },
@@ -2986,9 +2984,9 @@ describe("decodeInstruction", () => {
     [
       " rol.w (a0)",
       [0xe7, 0xd0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROL,
+        operation: "ROL",
         operands: [Implied(), ARIND(0)],
         extra: null,
       },
@@ -2996,9 +2994,9 @@ describe("decodeInstruction", () => {
     [
       " ror.w (a0)",
       [0xe6, 0xd0],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ROR,
+        operation: "ROR",
         operands: [Implied(), ARIND(0)],
         extra: null,
       },
@@ -3006,9 +3004,9 @@ describe("decodeInstruction", () => {
     [
       " moveq #-1,d2",
       [0x74, 0xff],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEQ,
+        operation: "MOVEQ",
         operands: [IMM8(0xff), DR(2)],
         extra: null,
       },
@@ -3016,9 +3014,9 @@ describe("decodeInstruction", () => {
     [
       " moveq #127,d5",
       [0x7a, 0x7f],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEQ,
+        operation: "MOVEQ",
         operands: [IMM8(0x7f), DR(5)],
         extra: null,
       },
@@ -3026,9 +3024,9 @@ describe("decodeInstruction", () => {
     [
       " fabs fp1",
       [0xf2, 0x00, 0x04, 0x98],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [FR(1), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3036,9 +3034,9 @@ describe("decodeInstruction", () => {
     [
       " fsabs fp1",
       [0xf2, 0x00, 0x04, 0xd8],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSABS,
+        operation: "FSABS",
         operands: [FR(1), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3046,9 +3044,9 @@ describe("decodeInstruction", () => {
     [
       " fdabs fp1",
       [0xf2, 0x00, 0x04, 0xdc],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FDABS,
+        operation: "FDABS",
         operands: [FR(1), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3056,9 +3054,9 @@ describe("decodeInstruction", () => {
     [
       " fabs.l (a0),fp1",
       [0xf2, 0x10, 0x40, 0x98],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_LONG_INT()),
       },
@@ -3066,9 +3064,9 @@ describe("decodeInstruction", () => {
     [
       " fabs.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x98],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3076,9 +3074,9 @@ describe("decodeInstruction", () => {
     [
       " fabs.d (a0),fp1",
       [0xf2, 0x10, 0x54, 0x98],
-      <Instruction>{
+      {
         size: 8,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_DOUBLE()),
       },
@@ -3086,9 +3084,9 @@ describe("decodeInstruction", () => {
     [
       " fabs.w (a0),fp1",
       [0xf2, 0x10, 0x50, 0x98],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_WORD_INT()),
       },
@@ -3096,9 +3094,9 @@ describe("decodeInstruction", () => {
     [
       " fabs.b (a0),fp1",
       [0xf2, 0x10, 0x58, 0x98],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_BYTE_INT()),
       },
@@ -3106,9 +3104,9 @@ describe("decodeInstruction", () => {
     [
       " fabs.x (a0),fp1",
       [0xf2, 0x10, 0x48, 0x98],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3116,9 +3114,9 @@ describe("decodeInstruction", () => {
     [
       " fabs.p (a0),fp1",
       [0xf2, 0x10, 0x4c, 0x98],
-      <Instruction>{
+      {
         size: 12,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_PACKED_DECIMAL_REAL_STATIC(0)),
       },
@@ -3126,9 +3124,9 @@ describe("decodeInstruction", () => {
     [
       " fabs fp3,fp1",
       [0xf2, 0x00, 0x0c, 0x98],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FABS,
+        operation: "FABS",
         operands: [FR(3), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3136,9 +3134,9 @@ describe("decodeInstruction", () => {
     [
       " facos fp0,fp1",
       [0xf2, 0x00, 0x00, 0x9c],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FACOS,
+        operation: "FACOS",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3146,9 +3144,9 @@ describe("decodeInstruction", () => {
     [
       " facos.s (a6),fp1",
       [0xf2, 0x16, 0x44, 0x9c],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FACOS,
+        operation: "FACOS",
         operands: [ARIND(6), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3156,9 +3154,9 @@ describe("decodeInstruction", () => {
     [
       " fadd fp0,fp1",
       [0xf2, 0x00, 0x00, 0xa2],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FADD,
+        operation: "FADD",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3166,9 +3164,9 @@ describe("decodeInstruction", () => {
     [
       " fsadd.s (a6),fp1",
       [0xf2, 0x16, 0x44, 0xe2],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSADD,
+        operation: "FSADD",
         operands: [ARIND(6), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3176,9 +3174,9 @@ describe("decodeInstruction", () => {
     [
       " fdadd.d (a6),fp1",
       [0xf2, 0x16, 0x54, 0xe6],
-      <Instruction>{
+      {
         size: 8,
-        operation: Operation.FDADD,
+        operation: "FDADD",
         operands: [ARIND(6), FR(1)],
         extra: FloatFormat(FPF_DOUBLE()),
       },
@@ -3186,9 +3184,9 @@ describe("decodeInstruction", () => {
     [
       " fasin fp3",
       [0xf2, 0x00, 0x0d, 0x8c],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FASIN,
+        operation: "FASIN",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3196,9 +3194,9 @@ describe("decodeInstruction", () => {
     [
       " fasin fp0,fp1",
       [0xf2, 0x00, 0x00, 0x8c],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FASIN,
+        operation: "FASIN",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3206,9 +3204,9 @@ describe("decodeInstruction", () => {
     [
       " fasin.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x8c],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FASIN,
+        operation: "FASIN",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3216,9 +3214,9 @@ describe("decodeInstruction", () => {
     [
       " fatan fp3",
       [0xf2, 0x00, 0x0d, 0x8a],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FATAN,
+        operation: "FATAN",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3226,9 +3224,9 @@ describe("decodeInstruction", () => {
     [
       " fatan fp0,fp1",
       [0xf2, 0x00, 0x00, 0x8a],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FATAN,
+        operation: "FATAN",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3236,9 +3234,9 @@ describe("decodeInstruction", () => {
     [
       " fatan.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x8a],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FATAN,
+        operation: "FATAN",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3246,9 +3244,9 @@ describe("decodeInstruction", () => {
     [
       " fatanh fp3",
       [0xf2, 0x00, 0x0d, 0x8d],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FATANH,
+        operation: "FATANH",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3256,9 +3254,9 @@ describe("decodeInstruction", () => {
     [
       " fatanh fp0,fp1",
       [0xf2, 0x00, 0x00, 0x8d],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FATANH,
+        operation: "FATANH",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3266,9 +3264,9 @@ describe("decodeInstruction", () => {
     [
       " fatanh.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x8d],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FATANH,
+        operation: "FATANH",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3276,9 +3274,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbne.l lab",
       [0xf2, 0xce, 0xff, 0xff, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_NE),
       },
@@ -3286,9 +3284,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbf.w lab",
       [0xf2, 0x80, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_F),
       },
@@ -3296,9 +3294,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbeq.w lab",
       [0xf2, 0x81, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_EQ),
       },
@@ -3306,9 +3304,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbogt.w lab",
       [0xf2, 0x82, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_OGT),
       },
@@ -3316,9 +3314,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fboge.w lab",
       [0xf2, 0x83, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_OGE),
       },
@@ -3326,9 +3324,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbolt.w lab",
       [0xf2, 0x84, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_OLT),
       },
@@ -3336,9 +3334,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbole.w lab",
       [0xf2, 0x85, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_OLE),
       },
@@ -3346,9 +3344,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbogl.w lab",
       [0xf2, 0x86, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_OGL),
       },
@@ -3356,9 +3354,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbor.w lab",
       [0xf2, 0x87, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_OR),
       },
@@ -3366,9 +3364,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbun.w lab",
       [0xf2, 0x88, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_UN),
       },
@@ -3376,9 +3374,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbueq.w lab",
       [0xf2, 0x89, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_UEQ),
       },
@@ -3386,9 +3384,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbugt.w lab",
       [0xf2, 0x8a, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_UGT),
       },
@@ -3396,9 +3394,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbuge.w lab",
       [0xf2, 0x8b, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_UGE),
       },
@@ -3406,9 +3404,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbult.w lab",
       [0xf2, 0x8c, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_ULT),
       },
@@ -3416,9 +3414,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbule.w lab",
       [0xf2, 0x8d, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_ULE),
       },
@@ -3426,9 +3424,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbne.w lab",
       [0xf2, 0x8e, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_NE),
       },
@@ -3436,9 +3434,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbt.w lab",
       [0xf2, 0x8f, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_T),
       },
@@ -3446,9 +3444,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbsf.w lab",
       [0xf2, 0x90, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_SF),
       },
@@ -3456,9 +3454,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbseq.w lab",
       [0xf2, 0x91, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_SEQ),
       },
@@ -3466,9 +3464,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbgt.w lab",
       [0xf2, 0x92, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_GT),
       },
@@ -3476,9 +3474,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbge.w lab",
       [0xf2, 0x93, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_GE),
       },
@@ -3486,9 +3484,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fblt.w lab",
       [0xf2, 0x94, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_LT),
       },
@@ -3496,9 +3494,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fble.w lab",
       [0xf2, 0x95, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_LE),
       },
@@ -3506,9 +3504,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbgl.w lab",
       [0xf2, 0x96, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_GL),
       },
@@ -3516,9 +3514,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbgle.w lab",
       [0xf2, 0x97, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_GLE),
       },
@@ -3526,9 +3524,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbngle.w lab",
       [0xf2, 0x98, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_NGLE),
       },
@@ -3536,9 +3534,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbngl.w lab",
       [0xf2, 0x99, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_NGL),
       },
@@ -3546,9 +3544,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbnle.w lab",
       [0xf2, 0x9a, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_NLE),
       },
@@ -3556,9 +3554,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbnlt.w lab",
       [0xf2, 0x9b, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_NLT),
       },
@@ -3566,9 +3564,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbnge.w lab",
       [0xf2, 0x9c, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_NGE),
       },
@@ -3576,9 +3574,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbngt.w lab",
       [0xf2, 0x9d, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_NGT),
       },
@@ -3586,9 +3584,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbsne.w lab",
       [0xf2, 0x9e, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_SNE),
       },
@@ -3596,9 +3594,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fbst.w lab",
       [0xf2, 0x9f, 0xff, 0xfe],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FBCC,
+        operation: "FBCC",
         operands: [PCDISP(2, simpleDisp(-2)), null],
         extra: FPCondition(FPConditionCode.FPCC_ST),
       },
@@ -3606,9 +3604,9 @@ describe("decodeInstruction", () => {
     [
       " fcmp fp2,fp4",
       [0xf2, 0x00, 0x0a, 0x38],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FCMP,
+        operation: "FCMP",
         operands: [FR(2), FR(4)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3616,9 +3614,9 @@ describe("decodeInstruction", () => {
     [
       " fcmp.s (a0),fp4",
       [0xf2, 0x10, 0x46, 0x38],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FCMP,
+        operation: "FCMP",
         operands: [ARIND(0), FR(4)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3626,9 +3624,9 @@ describe("decodeInstruction", () => {
     [
       " fcos fp3",
       [0xf2, 0x00, 0x0d, 0x9d],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FCOS,
+        operation: "FCOS",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3636,9 +3634,9 @@ describe("decodeInstruction", () => {
     [
       " fcos fp0,fp1",
       [0xf2, 0x00, 0x00, 0x9d],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FCOS,
+        operation: "FCOS",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3646,9 +3644,9 @@ describe("decodeInstruction", () => {
     [
       " fcos.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x9d],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FCOS,
+        operation: "FCOS",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3656,9 +3654,9 @@ describe("decodeInstruction", () => {
     [
       " fcosh fp3",
       [0xf2, 0x00, 0x0d, 0x99],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FCOSH,
+        operation: "FCOSH",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3666,9 +3664,9 @@ describe("decodeInstruction", () => {
     [
       " fcosh fp0,fp1",
       [0xf2, 0x00, 0x00, 0x99],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FCOSH,
+        operation: "FCOSH",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3676,9 +3674,9 @@ describe("decodeInstruction", () => {
     [
       " fcosh.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x99],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FCOSH,
+        operation: "FCOSH",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3686,9 +3684,9 @@ describe("decodeInstruction", () => {
     [
       " fdiv fp0,fp1",
       [0xf2, 0x00, 0x00, 0xa0],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FDIV,
+        operation: "FDIV",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3696,9 +3694,9 @@ describe("decodeInstruction", () => {
     [
       " fdiv.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xa0],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FDIV,
+        operation: "FDIV",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3706,9 +3704,9 @@ describe("decodeInstruction", () => {
     [
       " fsdiv.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xe0],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSDIV,
+        operation: "FSDIV",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3716,9 +3714,9 @@ describe("decodeInstruction", () => {
     [
       " fddiv.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xe4],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FDDIV,
+        operation: "FDDIV",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3726,9 +3724,9 @@ describe("decodeInstruction", () => {
     [
       " fetox fp3",
       [0xf2, 0x00, 0x0d, 0x90],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FETOX,
+        operation: "FETOX",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3736,9 +3734,9 @@ describe("decodeInstruction", () => {
     [
       " fetox fp0,fp1",
       [0xf2, 0x00, 0x00, 0x90],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FETOX,
+        operation: "FETOX",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3746,9 +3744,9 @@ describe("decodeInstruction", () => {
     [
       " fetox.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x90],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FETOX,
+        operation: "FETOX",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3756,9 +3754,9 @@ describe("decodeInstruction", () => {
     [
       " fetoxm1 fp3",
       [0xf2, 0x00, 0x0d, 0x88],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FETOXM1,
+        operation: "FETOXM1",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3766,9 +3764,9 @@ describe("decodeInstruction", () => {
     [
       " fetoxm1 fp0,fp1",
       [0xf2, 0x00, 0x00, 0x88],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FETOXM1,
+        operation: "FETOXM1",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3776,9 +3774,9 @@ describe("decodeInstruction", () => {
     [
       " fetoxm1.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x88],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FETOXM1,
+        operation: "FETOXM1",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3786,9 +3784,9 @@ describe("decodeInstruction", () => {
     [
       " fgetexp fp3",
       [0xf2, 0x00, 0x0d, 0x9e],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FGETEXP,
+        operation: "FGETEXP",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3796,9 +3794,9 @@ describe("decodeInstruction", () => {
     [
       " fgetexp fp0,fp1",
       [0xf2, 0x00, 0x00, 0x9e],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FGETEXP,
+        operation: "FGETEXP",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3806,9 +3804,9 @@ describe("decodeInstruction", () => {
     [
       " fgetexp.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x9e],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FGETEXP,
+        operation: "FGETEXP",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3816,9 +3814,9 @@ describe("decodeInstruction", () => {
     [
       " fgetman fp3",
       [0xf2, 0x00, 0x0d, 0x9f],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FGETMAN,
+        operation: "FGETMAN",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3826,9 +3824,9 @@ describe("decodeInstruction", () => {
     [
       " fgetman fp0,fp1",
       [0xf2, 0x00, 0x00, 0x9f],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FGETMAN,
+        operation: "FGETMAN",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3836,9 +3834,9 @@ describe("decodeInstruction", () => {
     [
       " fgetman.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x9f],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FGETMAN,
+        operation: "FGETMAN",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3846,9 +3844,9 @@ describe("decodeInstruction", () => {
     [
       " fint fp3",
       [0xf2, 0x00, 0x0d, 0x81],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FINT,
+        operation: "FINT",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3856,9 +3854,9 @@ describe("decodeInstruction", () => {
     [
       " fint fp0,fp1",
       [0xf2, 0x00, 0x00, 0x81],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FINT,
+        operation: "FINT",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3866,9 +3864,9 @@ describe("decodeInstruction", () => {
     [
       " fint.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x81],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FINT,
+        operation: "FINT",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3876,9 +3874,9 @@ describe("decodeInstruction", () => {
     [
       " fintrz fp3",
       [0xf2, 0x00, 0x0d, 0x83],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FINTRZ,
+        operation: "FINTRZ",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3886,9 +3884,9 @@ describe("decodeInstruction", () => {
     [
       " fintrz fp0,fp1",
       [0xf2, 0x00, 0x00, 0x83],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FINTRZ,
+        operation: "FINTRZ",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3896,9 +3894,9 @@ describe("decodeInstruction", () => {
     [
       " fintrz.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x83],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FINTRZ,
+        operation: "FINTRZ",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3906,9 +3904,9 @@ describe("decodeInstruction", () => {
     [
       " flog10 fp3",
       [0xf2, 0x00, 0x0d, 0x95],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FLOG10,
+        operation: "FLOG10",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3916,9 +3914,9 @@ describe("decodeInstruction", () => {
     [
       " flog10 fp0,fp1",
       [0xf2, 0x00, 0x00, 0x95],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FLOG10,
+        operation: "FLOG10",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3926,9 +3924,9 @@ describe("decodeInstruction", () => {
     [
       " flog10.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x95],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FLOG10,
+        operation: "FLOG10",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3936,9 +3934,9 @@ describe("decodeInstruction", () => {
     [
       " flog2 fp3",
       [0xf2, 0x00, 0x0d, 0x96],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FLOG2,
+        operation: "FLOG2",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3946,9 +3944,9 @@ describe("decodeInstruction", () => {
     [
       " flog2 fp0,fp1",
       [0xf2, 0x00, 0x00, 0x96],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FLOG2,
+        operation: "FLOG2",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3956,9 +3954,9 @@ describe("decodeInstruction", () => {
     [
       " flog2.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x96],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FLOG2,
+        operation: "FLOG2",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3966,9 +3964,9 @@ describe("decodeInstruction", () => {
     [
       " flogn fp3",
       [0xf2, 0x00, 0x0d, 0x94],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FLOGN,
+        operation: "FLOGN",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3976,9 +3974,9 @@ describe("decodeInstruction", () => {
     [
       " flogn fp0,fp1",
       [0xf2, 0x00, 0x00, 0x94],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FLOGN,
+        operation: "FLOGN",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -3986,9 +3984,9 @@ describe("decodeInstruction", () => {
     [
       " flogn.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x94],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FLOGN,
+        operation: "FLOGN",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -3996,9 +3994,9 @@ describe("decodeInstruction", () => {
     [
       " flognp1 fp3",
       [0xf2, 0x00, 0x0d, 0x86],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FLOGNP1,
+        operation: "FLOGNP1",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4006,9 +4004,9 @@ describe("decodeInstruction", () => {
     [
       " flognp1 fp0,fp1",
       [0xf2, 0x00, 0x00, 0x86],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FLOGNP1,
+        operation: "FLOGNP1",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4016,9 +4014,9 @@ describe("decodeInstruction", () => {
     [
       " flognp1.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x86],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FLOGNP1,
+        operation: "FLOGNP1",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4026,9 +4024,9 @@ describe("decodeInstruction", () => {
     [
       " fmod fp0,fp1",
       [0xf2, 0x00, 0x00, 0xa1],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOD,
+        operation: "FMOD",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4036,9 +4034,9 @@ describe("decodeInstruction", () => {
     [
       " fmod.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xa1],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FMOD,
+        operation: "FMOD",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4046,9 +4044,9 @@ describe("decodeInstruction", () => {
     [
       " fmovecr #30,fp1",
       [0xf2, 0x00, 0x5c, 0x9e],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOVECR,
+        operation: "FMOVECR",
         operands: [IMM8(30), FR(1)],
         extra: null,
       },
@@ -4056,9 +4054,9 @@ describe("decodeInstruction", () => {
     [
       " lab: fdbgt d6,lab",
       [0xf2, 0x4e, 0x00, 0x12, 0xff, 0xfc],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FDBCC,
+        operation: "FDBCC",
         operands: [DR(6), PCDISP(4, simpleDisp(-4))],
         extra: FPCondition(FPConditionCode.FPCC_GT),
       },
@@ -4066,9 +4064,9 @@ describe("decodeInstruction", () => {
     [
       " fmove fp3,fp5",
       [0xf2, 0x00, 0x0e, 0x80],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [FR(3), FR(5)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4076,9 +4074,9 @@ describe("decodeInstruction", () => {
     [
       " fmove.x (a0),fp5",
       [0xf2, 0x10, 0x4a, 0x80],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [ARIND(0), FR(5)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4086,9 +4084,9 @@ describe("decodeInstruction", () => {
     [
       " fmove.s (a0),fp5",
       [0xf2, 0x10, 0x46, 0x80],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [ARIND(0), FR(5)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4096,9 +4094,9 @@ describe("decodeInstruction", () => {
     [
       " fsmove.d (a0),fp5",
       [0xf2, 0x10, 0x56, 0xc0],
-      <Instruction>{
+      {
         size: 8,
-        operation: Operation.FSMOVE,
+        operation: "FSMOVE",
         operands: [ARIND(0), FR(5)],
         extra: FloatFormat(FPF_DOUBLE()),
       },
@@ -4106,9 +4104,9 @@ describe("decodeInstruction", () => {
     [
       " fdmove.p (a0),fp5",
       [0xf2, 0x10, 0x4e, 0xc4],
-      <Instruction>{
+      {
         size: 12,
-        operation: Operation.FDMOVE,
+        operation: "FDMOVE",
         operands: [ARIND(0), FR(5)],
         extra: FloatFormat(FPF_PACKED_DECIMAL_REAL_STATIC(0)),
       },
@@ -4116,9 +4114,9 @@ describe("decodeInstruction", () => {
     [
       " fmove.s fp4,(a1)",
       [0xf2, 0x11, 0x66, 0x00],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [FR(4), ARIND(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4126,9 +4124,9 @@ describe("decodeInstruction", () => {
     [
       " fmove.p fp4,(a1){#12}",
       [0xf2, 0x11, 0x6e, 0x0c],
-      <Instruction>{
+      {
         size: 12,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [FR(4), ARIND(1)],
         extra: FloatFormat(FPF_PACKED_DECIMAL_REAL_STATIC(12)),
       },
@@ -4136,9 +4134,9 @@ describe("decodeInstruction", () => {
     [
       " fmove.p fp4,(a1){#-64}",
       [0xf2, 0x11, 0x6e, 0x40],
-      <Instruction>{
+      {
         size: 12,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [FR(4), ARIND(1)],
         extra: FloatFormat(FPF_PACKED_DECIMAL_REAL_STATIC(-64)),
       },
@@ -4146,9 +4144,9 @@ describe("decodeInstruction", () => {
     [
       " fmove.p fp4,(a1){#63}",
       [0xf2, 0x11, 0x6e, 0x3f],
-      <Instruction>{
+      {
         size: 12,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [FR(4), ARIND(1)],
         extra: FloatFormat(FPF_PACKED_DECIMAL_REAL_STATIC(63)),
       },
@@ -4156,9 +4154,9 @@ describe("decodeInstruction", () => {
     [
       " fmove.p fp4,(a1){d3}",
       [0xf2, 0x11, 0x7e, 0x30],
-      <Instruction>{
+      {
         size: 12,
-        operation: Operation.FMOVE,
+        operation: "FMOVE",
         operands: [FR(4), ARIND(1)],
         extra: FloatFormat(FPF_PACKED_DECIMAL_REAL_DYNAMIC(3)),
       },
@@ -4166,9 +4164,9 @@ describe("decodeInstruction", () => {
     [
       " fmovem.x fp0-fp4,-(a3)",
       [0xf2, 0x23, 0xe0, 0x1f],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOVEM,
+        operation: "FMOVEM",
         operands: [REGLIST(0b11111), ARDEC(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4176,9 +4174,9 @@ describe("decodeInstruction", () => {
     [
       " fmovem.x d7,-(a3)",
       [0xf2, 0x23, 0xe8, 0x70],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOVEM,
+        operation: "FMOVEM",
         operands: [DR(7), ARDEC(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4186,9 +4184,9 @@ describe("decodeInstruction", () => {
     [
       " fmovem.x d7,(a3)",
       [0xf2, 0x13, 0xf8, 0x70],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOVEM,
+        operation: "FMOVEM",
         operands: [DR(7), ARIND(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4196,9 +4194,9 @@ describe("decodeInstruction", () => {
     [
       " fmovem.x (a3),d7",
       [0xf2, 0x13, 0xd8, 0x70],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOVEM,
+        operation: "FMOVEM",
         operands: [ARIND(3), DR(7)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4206,9 +4204,9 @@ describe("decodeInstruction", () => {
     [
       " fmovem.x (a3)+,d7",
       [0xf2, 0x1b, 0xd8, 0x70],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOVEM,
+        operation: "FMOVEM",
         operands: [ARINC(3), DR(7)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4216,9 +4214,9 @@ describe("decodeInstruction", () => {
     [
       " fmovem.x (a3)+,fp0/fp6",
       [0xf2, 0x1b, 0xd0, 0x82],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMOVEM,
+        operation: "FMOVEM",
         operands: [ARINC(3), REGLIST(0b1000_0010)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4226,9 +4224,9 @@ describe("decodeInstruction", () => {
     [
       " fmul fp0,fp1",
       [0xf2, 0x00, 0x00, 0xa3],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FMUL,
+        operation: "FMUL",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4236,9 +4234,9 @@ describe("decodeInstruction", () => {
     [
       " fmul.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xa3],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FMUL,
+        operation: "FMUL",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4246,9 +4244,9 @@ describe("decodeInstruction", () => {
     [
       " fsmul.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xe3],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSMUL,
+        operation: "FSMUL",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4256,9 +4254,9 @@ describe("decodeInstruction", () => {
     [
       " fdmul.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xe7],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FDMUL,
+        operation: "FDMUL",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4266,9 +4264,9 @@ describe("decodeInstruction", () => {
     [
       " fneg fp3",
       [0xf2, 0x00, 0x0d, 0x9a],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FNEG,
+        operation: "FNEG",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4276,9 +4274,9 @@ describe("decodeInstruction", () => {
     [
       " fneg fp0,fp1",
       [0xf2, 0x00, 0x00, 0x9a],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FNEG,
+        operation: "FNEG",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4286,9 +4284,9 @@ describe("decodeInstruction", () => {
     [
       " fneg.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x9a],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FNEG,
+        operation: "FNEG",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4296,9 +4294,9 @@ describe("decodeInstruction", () => {
     [
       " fsneg.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xda],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSNEG,
+        operation: "FSNEG",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4306,9 +4304,9 @@ describe("decodeInstruction", () => {
     [
       " fdneg.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xde],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FDNEG,
+        operation: "FDNEG",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4316,9 +4314,9 @@ describe("decodeInstruction", () => {
     [
       " fnop",
       [0xf2, 0x80, 0x00, 0x00],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.FNOP,
+        operation: "FNOP",
         operands: [null, null],
         extra: null,
       },
@@ -4326,9 +4324,9 @@ describe("decodeInstruction", () => {
     [
       " frem fp0,fp1",
       [0xf2, 0x00, 0x00, 0xa5],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FREM,
+        operation: "FREM",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4336,9 +4334,9 @@ describe("decodeInstruction", () => {
     [
       " frem.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xa5],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FREM,
+        operation: "FREM",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4346,9 +4344,9 @@ describe("decodeInstruction", () => {
     [
       " fscale fp0,fp1",
       [0xf2, 0x00, 0x00, 0xa6],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSCALE,
+        operation: "FSCALE",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4356,9 +4354,9 @@ describe("decodeInstruction", () => {
     [
       " fscale.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xa6],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSCALE,
+        operation: "FSCALE",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4366,9 +4364,9 @@ describe("decodeInstruction", () => {
     [
       " fsgt (a0)",
       [0xf2, 0x50, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 1,
-        operation: Operation.FSCC,
+        operation: "FSCC",
         operands: [Implied(), ARIND(0)],
         extra: FPCondition(FPConditionCode.FPCC_GT),
       },
@@ -4376,9 +4374,9 @@ describe("decodeInstruction", () => {
     [
       " fsgldiv fp0,fp1",
       [0xf2, 0x00, 0x00, 0xa4],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSGLDIV,
+        operation: "FSGLDIV",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4386,9 +4384,9 @@ describe("decodeInstruction", () => {
     [
       " fsgldiv.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xa4],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSGLDIV,
+        operation: "FSGLDIV",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4396,9 +4394,9 @@ describe("decodeInstruction", () => {
     [
       " fsglmul fp0,fp1",
       [0xf2, 0x00, 0x00, 0xa7],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSGLMUL,
+        operation: "FSGLMUL",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4406,9 +4404,9 @@ describe("decodeInstruction", () => {
     [
       " fsglmul.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xa7],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSGLMUL,
+        operation: "FSGLMUL",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4416,9 +4414,9 @@ describe("decodeInstruction", () => {
     [
       " fsin fp3",
       [0xf2, 0x00, 0x0d, 0x8e],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSIN,
+        operation: "FSIN",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4426,9 +4424,9 @@ describe("decodeInstruction", () => {
     [
       " fsin fp0,fp1",
       [0xf2, 0x00, 0x00, 0x8e],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSIN,
+        operation: "FSIN",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4436,9 +4434,9 @@ describe("decodeInstruction", () => {
     [
       " fsin.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x8e],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSIN,
+        operation: "FSIN",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4446,9 +4444,9 @@ describe("decodeInstruction", () => {
     [
       " fsincos fp0,fp1:fp2",
       [0xf2, 0x00, 0x01, 0x31],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSINCOS,
+        operation: "FSINCOS",
         operands: [FR(0), FPAIR(2, 1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4456,9 +4454,9 @@ describe("decodeInstruction", () => {
     [
       " fsincos.s (a0),fp1:fp2",
       [0xf2, 0x10, 0x45, 0x31],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSINCOS,
+        operation: "FSINCOS",
         operands: [ARIND(0), FPAIR(2, 1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4466,9 +4464,9 @@ describe("decodeInstruction", () => {
     [
       " fsinh fp3",
       [0xf2, 0x00, 0x0d, 0x82],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSINH,
+        operation: "FSINH",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4476,9 +4474,9 @@ describe("decodeInstruction", () => {
     [
       " fsinh fp0,fp1",
       [0xf2, 0x00, 0x00, 0x82],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSINH,
+        operation: "FSINH",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4486,9 +4484,9 @@ describe("decodeInstruction", () => {
     [
       " fsinh.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x82],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSINH,
+        operation: "FSINH",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4496,9 +4494,9 @@ describe("decodeInstruction", () => {
     [
       " fsqrt fp3",
       [0xf2, 0x00, 0x0d, 0x84],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSQRT,
+        operation: "FSQRT",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4506,9 +4504,9 @@ describe("decodeInstruction", () => {
     [
       " fsqrt fp0,fp1",
       [0xf2, 0x00, 0x00, 0x84],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSQRT,
+        operation: "FSQRT",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4516,9 +4514,9 @@ describe("decodeInstruction", () => {
     [
       " fsqrt.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x84],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSQRT,
+        operation: "FSQRT",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4526,9 +4524,9 @@ describe("decodeInstruction", () => {
     [
       " fssqrt fp3",
       [0xf2, 0x00, 0x0d, 0xc1],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSSQRT,
+        operation: "FSSQRT",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4536,9 +4534,9 @@ describe("decodeInstruction", () => {
     [
       " fdsqrt fp3",
       [0xf2, 0x00, 0x0d, 0xc5],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FDSQRT,
+        operation: "FDSQRT",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4546,9 +4544,9 @@ describe("decodeInstruction", () => {
     [
       " fsub fp0,fp1",
       [0xf2, 0x00, 0x00, 0xa8],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSUB,
+        operation: "FSUB",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4556,9 +4554,9 @@ describe("decodeInstruction", () => {
     [
       " fsub.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0xa8],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FSUB,
+        operation: "FSUB",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4566,9 +4564,9 @@ describe("decodeInstruction", () => {
     [
       " fssub.x (a0),fp1",
       [0xf2, 0x10, 0x48, 0xe8],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FSSUB,
+        operation: "FSSUB",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4576,9 +4574,9 @@ describe("decodeInstruction", () => {
     [
       " fdsub.l (a0),fp1",
       [0xf2, 0x10, 0x40, 0xec],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FDSUB,
+        operation: "FDSUB",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_LONG_INT()),
       },
@@ -4586,9 +4584,9 @@ describe("decodeInstruction", () => {
     [
       " ftan fp3",
       [0xf2, 0x00, 0x0d, 0x8f],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FTAN,
+        operation: "FTAN",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4596,9 +4594,9 @@ describe("decodeInstruction", () => {
     [
       " ftan fp0,fp1",
       [0xf2, 0x00, 0x00, 0x8f],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FTAN,
+        operation: "FTAN",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4606,9 +4604,9 @@ describe("decodeInstruction", () => {
     [
       " ftan.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x8f],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FTAN,
+        operation: "FTAN",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4616,9 +4614,9 @@ describe("decodeInstruction", () => {
     [
       " ftanh fp3",
       [0xf2, 0x00, 0x0d, 0x89],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FTANH,
+        operation: "FTANH",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4626,9 +4624,9 @@ describe("decodeInstruction", () => {
     [
       " ftanh fp0,fp1",
       [0xf2, 0x00, 0x00, 0x89],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FTANH,
+        operation: "FTANH",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4636,9 +4634,9 @@ describe("decodeInstruction", () => {
     [
       " ftanh.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x89],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FTANH,
+        operation: "FTANH",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4646,9 +4644,9 @@ describe("decodeInstruction", () => {
     [
       " ftentox fp3",
       [0xf2, 0x00, 0x0d, 0x92],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FTENTOX,
+        operation: "FTENTOX",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4656,9 +4654,9 @@ describe("decodeInstruction", () => {
     [
       " ftentox fp0,fp1",
       [0xf2, 0x00, 0x00, 0x92],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FTENTOX,
+        operation: "FTENTOX",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4666,9 +4664,9 @@ describe("decodeInstruction", () => {
     [
       " ftentox.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x92],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FTENTOX,
+        operation: "FTENTOX",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4676,9 +4674,9 @@ describe("decodeInstruction", () => {
     [
       " ftrapgt",
       [0xf2, 0x7c, 0x00, 0x12],
-      <Instruction>{
+      {
         size: 0,
-        operation: Operation.FTRAPCC,
+        operation: "FTRAPCC",
         operands: [Implied(), null],
         extra: FPCondition(FPConditionCode.FPCC_GT),
       },
@@ -4686,9 +4684,9 @@ describe("decodeInstruction", () => {
     [
       " ftrapeq.w #123",
       [0xf2, 0x7a, 0x00, 0x01, 0x00, 0x7b],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.FTRAPCC,
+        operation: "FTRAPCC",
         operands: [Implied(), IMM16(123)],
         extra: FPCondition(FPConditionCode.FPCC_EQ),
       },
@@ -4696,9 +4694,9 @@ describe("decodeInstruction", () => {
     [
       " ftrapne.l #1234567",
       [0xf2, 0x7b, 0x00, 0x0e, 0x00, 0x12, 0xd6, 0x87],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FTRAPCC,
+        operation: "FTRAPCC",
         operands: [Implied(), IMM32(1234567)],
         extra: FPCondition(FPConditionCode.FPCC_NE),
       },
@@ -4706,9 +4704,9 @@ describe("decodeInstruction", () => {
     [
       " ftst.l (a0)",
       [0xf2, 0x10, 0x40, 0x3a],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FTST,
+        operation: "FTST",
         operands: [ARIND(0), null],
         extra: FloatFormat(FPF_LONG_INT()),
       },
@@ -4716,9 +4714,9 @@ describe("decodeInstruction", () => {
     [
       " ftst fp7",
       [0xf2, 0x00, 0x1c, 0x3a],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FTST,
+        operation: "FTST",
         operands: [FR(7), null],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4726,9 +4724,9 @@ describe("decodeInstruction", () => {
     [
       " ftwotox fp3",
       [0xf2, 0x00, 0x0d, 0x91],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FTWOTOX,
+        operation: "FTWOTOX",
         operands: [FR(3), FR(3)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4736,9 +4734,9 @@ describe("decodeInstruction", () => {
     [
       " ftwotox fp0,fp1",
       [0xf2, 0x00, 0x00, 0x91],
-      <Instruction>{
+      {
         size: 10,
-        operation: Operation.FTWOTOX,
+        operation: "FTWOTOX",
         operands: [FR(0), FR(1)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
@@ -4746,9 +4744,9 @@ describe("decodeInstruction", () => {
     [
       " ftwotox.s (a0),fp1",
       [0xf2, 0x10, 0x44, 0x91],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.FTWOTOX,
+        operation: "FTWOTOX",
         operands: [ARIND(0), FR(1)],
         extra: FloatFormat(FPF_SINGLE()),
       },
@@ -4756,9 +4754,9 @@ describe("decodeInstruction", () => {
     [
       " movec.l a3,cacr",
       [0x4e, 0x7b, 0xb0, 0x02],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEC,
+        operation: "MOVEC",
         operands: [AR(3), CONTROLREG(2)],
         extra: null,
       },
@@ -4766,9 +4764,9 @@ describe("decodeInstruction", () => {
     [
       " movec.l d3,cacr",
       [0x4e, 0x7b, 0x30, 0x02],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEC,
+        operation: "MOVEC",
         operands: [DR(3), CONTROLREG(2)],
         extra: null,
       },
@@ -4776,9 +4774,9 @@ describe("decodeInstruction", () => {
     [
       " movec.l isp,a3",
       [0x4e, 0x7a, 0xb8, 0x04],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEC,
+        operation: "MOVEC",
         operands: [CONTROLREG(0x804), AR(3)],
         extra: null,
       },
@@ -4786,9 +4784,9 @@ describe("decodeInstruction", () => {
     [
       " movec.l isp,d3",
       [0x4e, 0x7a, 0x38, 0x04],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.MOVEC,
+        operation: "MOVEC",
         operands: [CONTROLREG(0x804), DR(3)],
         extra: null,
       },
@@ -4796,9 +4794,9 @@ describe("decodeInstruction", () => {
     [
       " adda.w (a3),a2",
       [0xd4, 0xd3],
-      <Instruction>{
+      {
         size: 2,
-        operation: Operation.ADDA,
+        operation: "ADDA",
         operands: [ARIND(3), AR(2)],
         extra: null,
       },
@@ -4806,16 +4804,16 @@ describe("decodeInstruction", () => {
     [
       " adda.l (a3),a2",
       [0xd5, 0xd3],
-      <Instruction>{
+      {
         size: 4,
-        operation: Operation.ADDA,
+        operation: "ADDA",
         operands: [ARIND(3), AR(2)],
         extra: null,
       },
     ],
   ])("%s", (_name, bytes, expected) => {
     const code = Uint8Array.from(bytes);
-    if (expected === DecodingError.NotImplemented) {
+    if (expected === "NotImplemented") {
       expect(() => decodeInstruction(code)).toThrowError();
     } else {
       const decoded = decodeInstruction(code);
