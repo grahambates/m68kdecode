@@ -4818,6 +4818,7 @@ describe("decodeInstruction", () => {
     } else {
       const decoded = decodeInstruction(code);
       expect(decoded.instruction).toEqual(expected);
+      expect(decoded.bytesUsed).toEqual(code.length);
     }
   });
 });
