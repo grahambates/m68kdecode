@@ -34,7 +34,6 @@ import decodeInstruction, {
   IMM32,
   IMM8,
   Implied,
-  Instruction,
   PackAdjustment,
   PCDISP,
   REGLIST,

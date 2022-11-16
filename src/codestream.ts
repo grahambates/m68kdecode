@@ -6,10 +6,7 @@ import {
   Operand,
   InstructionExtra,
   BitfieldData,
-  Instruction,
-  DecodedInstruction,
   Indexer,
-  DecodingError,
   Displacement,
   FloatFormat,
   FPF_EXTENDED_REAL,
@@ -46,17 +43,9 @@ import {
 import { getBits, i16, i8, simpleDisp, u8 } from "./lib";
 
 class CodeStream {
-  private pos = 0;
-  private error: DecodingError | null = null;
+  public pos = 0;
 
   constructor(public bytes: Uint8Array) {}
-
-  checkOverflow(i: Instruction): DecodedInstruction {
-    if (this.error) {
-      throw new Error(this.error);
-    }
-    return { bytesUsed: this.pos, instruction: i };
-  }
 
   hasWords(count: number): boolean {
     return this.pos + count * 2 <= this.bytes.length;
@@ -64,12 +53,10 @@ class CodeStream {
 
   peekWord(offset: number): number {
     const p = this.pos + offset;
-    if (p + 2 <= this.bytes.length) {
-      return (this.bytes[p] << 8) | this.bytes[p + 1];
-    } else {
-      this.error = "OutOfSpace";
-      return 0;
+    if (p + 2 > this.bytes.length) {
+      throw new Error("OutOfSpace");
     }
+    return (this.bytes[p] << 8) | this.bytes[p + 1];
   }
 
   skipWords(count: number) {
@@ -102,20 +89,16 @@ class CodeStream {
         return ARDEC(srcReg);
       case 0b101:
         return ARDISP(srcReg, simpleDisp(i16(this.pull16())));
-      case 0b110: {
-        const r = srcReg;
-        return this.decodeExtendedEa(r);
-      }
+      case 0b110:
+        return this.decodeExtendedEa(srcReg);
       case 0b111: {
         switch (srcReg) {
           case 0b000:
             return ABS16(i16(this.pull16()));
           case 0b001:
             return ABS32(this.pull32());
-          case 0b010: {
-            const pc_offset = this.pos;
-            return PCDISP(i8(pc_offset), simpleDisp(i16(this.pull16())));
-          }
+          case 0b010:
+            return PCDISP(i8(this.pos), simpleDisp(i16(this.pull16())));
           case 0b011:
             return this.decodeExtendedEa(null);
           case 0b100: {
@@ -127,22 +110,14 @@ class CodeStream {
               case 4:
                 return IMM32(this.pull32());
               default: {
-                this.error = "BadSize";
-                return null;
+                throw new Error("BadSize");
               }
             }
           }
-          default: {
-            this.error = "NotImplemented";
-            return null;
-          }
         }
       }
-      default: {
-        this.error = "NotImplemented";
-        return null;
-      }
     }
+    throw new Error("NotImplemented");
   }
 
   decodeExtendedEa(srcReg: number | null): Operand {
@@ -156,132 +131,120 @@ class CodeStream {
       // Handle full extension word.
       const bd = getBits(ext, 4, 2);
       const od = getBits(ext, 0, 2);
-      let disp: number;
+      let baseDisplacement: number;
       switch (bd) {
         case 0:
-          this.error = "Reserved";
-          disp = 0;
-          break;
+          throw new Error("Reserved");
         case 1:
-          disp = 0;
+          baseDisplacement = 0;
           break;
         case 2:
-          disp = i16(this.pull16());
+          baseDisplacement = i16(this.pull16());
           break;
         case 3:
-          disp = this.pull32();
+          baseDisplacement = this.pull32();
           break;
         default:
-          this.error = "NotImplemented";
-          disp = 0;
+          throw new Error("NotImplemented");
       }
-      let odisp: number;
+      let outerDisplacement: number;
       switch (od) {
         case 0:
-          odisp = 0;
+          outerDisplacement = 0;
           break;
         case 1:
-          odisp = 0;
+          outerDisplacement = 0;
           break;
         case 2:
-          odisp = i16(this.pull16());
+          outerDisplacement = i16(this.pull16());
           break;
         case 3:
-          odisp = this.pull32();
+          outerDisplacement = this.pull32();
           break;
         default:
-          this.error = "NotImplemented";
-          odisp = 0;
+          throw new Error("NotImplemented");
       }
 
       const suppressBase = getBits(ext, 7, 1) === 1;
       const suppressIndexer = getBits(ext, 6, 1) === 1;
 
-      let indirectionMode: MemoryIndirection | null;
+      let indirection: MemoryIndirection | null;
 
       if (!suppressIndexer) {
         switch (getBits(ext, 0, 3)) {
           case 0b000:
-            indirectionMode = null;
+            indirection = null;
             break;
           case 0b001:
-            indirectionMode = "IndirectPreIndexed";
+            indirection = "IndirectPreIndexed";
             break;
           case 0b010:
-            indirectionMode = "IndirectPreIndexed";
+            indirection = "IndirectPreIndexed";
             break;
           case 0b011:
-            indirectionMode = "IndirectPreIndexed";
+            indirection = "IndirectPreIndexed";
             break;
           case 0b100:
-            this.error = "Reserved";
-            indirectionMode = null;
-            break;
+            throw new Error("Reserved");
           case 0b101:
-            indirectionMode = "IndirectPostIndexed";
+            indirection = "IndirectPostIndexed";
             break;
           case 0b110:
-            indirectionMode = "IndirectPostIndexed";
+            indirection = "IndirectPostIndexed";
             break;
           case 0b111:
-            indirectionMode = "IndirectPostIndexed";
+            indirection = "IndirectPostIndexed";
             break;
           default:
-            this.error = "NotImplemented";
-            indirectionMode = null;
+            throw new Error("NotImplemented");
         }
       } else {
         switch (getBits(ext, 0, 3)) {
           case 0b000:
-            indirectionMode = null;
+            indirection = null;
             break;
           case 0b001:
-            indirectionMode = "Indirect";
+            indirection = "Indirect";
             break;
           case 0b010:
-            indirectionMode = "Indirect";
+            indirection = "Indirect";
             break;
           case 0b011:
-            indirectionMode = "Indirect";
+            indirection = "Indirect";
             break;
           default:
-            this.error = "Reserved";
-            indirectionMode = null;
+            throw new Error("Reserved");
         }
       }
 
       let indexer: Indexer | null = null;
       if (!suppressIndexer) {
-        if (idxIsA) {
-          indexer = ARIndexer(idx, scale);
-        } else {
-          indexer = DRIndexer(idx, scale);
-        }
+        indexer = idxIsA
+          ? ARIndexer(idx, scale)
+          : DRIndexer(idx, scale);
       }
 
       if (suppressBase) {
         return DISP({
-          baseDisplacement: disp,
-          outerDisplacement: odisp,
+          baseDisplacement,
+          outerDisplacement,
           indexer,
-          indirection: indirectionMode,
+          indirection,
         });
       } else {
-        if (srcReg !== null) {
-          return ARDISP(srcReg, {
-            baseDisplacement: disp,
-            outerDisplacement: odisp,
+        return (srcReg !== null)
+          ? ARDISP(srcReg, {
+              baseDisplacement,
+              outerDisplacement,
+              indexer,
+              indirection,
+            })
+          : PCDISP(pcOff, {
+            baseDisplacement,
+            outerDisplacement,
             indexer,
-            indirection: indirectionMode,
+            indirection,
           });
-        } else {
-          return PCDISP(pcOff, {
-            baseDisplacement: disp,
-            outerDisplacement: odisp,
-            indexer,
-            indirection: indirectionMode,
-          });
-        }
       }
     } else {
       // Handle brief extension word
@@ -424,9 +387,7 @@ class CodeStream {
           fpform = FPF_PACKED_DECIMAL_REAL_DYNAMIC(k >> 4);
           break;
         default:
-          this.error = "Reserved";
-          sz = 0;
-          fpform = FPF_BYTE_INT();
+          throw new Error("Reserved");
       }
 
       return [sz, this.ea(rg, md, sz), FR(d), FloatFormat(fpform)];

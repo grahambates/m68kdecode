@@ -189,7 +189,7 @@ export type MemoryIndirection =
   /// Memory pre-indexed indirection (indexer applies to inner array).
   | "IndirectPreIndexed"
   /// Memory post-indexed indirection (indexer applies to outer array).
-  | "IndirectPostIndexed"
+  | "IndirectPostIndexed";
 
 /// Indicates how indexing is to be performed.
 export type Indexer = DiscriminatedUnion<
