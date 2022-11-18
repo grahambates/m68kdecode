@@ -154,7 +154,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const r = getBits(w0, 0, 3);
     const size = 4;
     const src = DR(d);
-    const dst = cs.ea(r, m, 4);
+    const dst = cs.ea(r, m, 2);
     const extra: InstructionExtra | null = null;
     return {
       bytesUsed: cs.pos,

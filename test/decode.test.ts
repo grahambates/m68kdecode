@@ -671,6 +671,16 @@ describe("decodeInstruction", () => {
       },
     ],
     [
+      " btst d0,#18",
+      [0x01, 0x3c, 0x00, 0x12],
+      {
+        size: 4,
+        operation: "BTST",
+        operands: [DR(0), IMM16(18)],
+        extra: null,
+      },
+    ],
+    [
       " btst #18,(a0)+",
       [0x08, 0x18, 0x00, 0x12],
       {
