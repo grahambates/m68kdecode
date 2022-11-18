@@ -6192,6 +6192,13 @@ function decodeGroup1111(w0: number, cs: CodeStream): DecodedInstruction {
   }
   throw new Error("NotImplemented");
 }
+
+/**
+ * Attempt to decode a single M68000 instruction starting at `code[0]`
+ *
+ * @param {Uint8Array} code Instruction byte array
+ * @returns {DecodedInstruction} Decoded instruction structured data
+ */
 export function decodeInstruction(code: Uint8Array): DecodedInstruction {
   const cs = new CodeStream(code);
   const w0 = cs.pull16();

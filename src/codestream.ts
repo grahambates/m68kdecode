@@ -219,9 +219,7 @@ class CodeStream {
 
       let indexer: Indexer | null = null;
       if (!suppressIndexer) {
-        indexer = idxIsA
-          ? ARIndexer(idx, scale)
-          : DRIndexer(idx, scale);
+        indexer = idxIsA ? ARIndexer(idx, scale) : DRIndexer(idx, scale);
       }
 
       if (suppressBase) {
@@ -232,7 +230,7 @@ class CodeStream {
           indirection,
         });
       } else {
-        return (srcReg !== null)
+        return srcReg !== null
           ? ARDISP(srcReg, {
               baseDisplacement,
               outerDisplacement,
@@ -240,11 +238,11 @@ class CodeStream {
               indirection,
             })
           : PCDISP(pcOff, {
-            baseDisplacement,
-            outerDisplacement,
-            indexer,
-            indirection,
-          });
+              baseDisplacement,
+              outerDisplacement,
+              indexer,
+              indirection,
+            });
       }
     } else {
       // Handle brief extension word

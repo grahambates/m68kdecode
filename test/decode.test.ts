@@ -1,5 +1,5 @@
 /* eslint-disable jest/no-conditional-expect */
-import decodeInstruction, {
+import {
   ABS16,
   ABS32,
   AR,
@@ -34,11 +34,13 @@ import decodeInstruction, {
   IMM32,
   IMM8,
   Implied,
+  instructionToString,
   PackAdjustment,
   PCDISP,
   REGLIST,
   STATIC,
 } from "../src";
+import { decodeInstruction } from "../src/decode";
 import { drDisp, drDispScale, simpleDisp } from "../src/lib";
 
 describe("decodeInstruction", () => {
@@ -84,7 +86,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " move.w a0,a1",
+      " movea.w a0,a1",
       [0x32, 0x48],
       {
         size: 2,
@@ -94,7 +96,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " move.w a2,a3",
+      " movea.w a2,a3",
       [0x36, 0x4a],
       {
         size: 2,
@@ -104,7 +106,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " move.w a4,a5",
+      " movea.w a4,a5",
       [0x3a, 0x4c],
       {
         size: 2,
@@ -114,7 +116,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " move.w a6,a7",
+      " movea.w a6,a7",
       [0x3e, 0x4e],
       {
         size: 2,
@@ -154,7 +156,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " move.l 123(a0,d0),a1",
+      " movea.l 123(a0,d0),a1",
       [0x22, 0x70, 0x00, 0x7b],
       {
         size: 4,
@@ -164,7 +166,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " move.w 123(a0,d0),a1",
+      " movea.w 123(a0,d0),a1",
       [0x32, 0x70, 0x00, 0x7b],
       {
         size: 2,
@@ -234,7 +236,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " move.l 4.w,A0",
+      " movea.l 4.w,A0",
       [0x20, 0x78, 0x00, 0x04],
       {
         size: 4,
@@ -244,7 +246,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " move.l $11223344,A0",
+      " movea.l $11223344,A0",
       [0x20, 0x79, 0x11, 0x22, 0x33, 0x44],
       {
         size: 4,
@@ -359,7 +361,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " ori #17,ccr",
+      " ori.b #17,ccr",
       [0x00, 0x3c, 0x00, 0x11],
       {
         size: 1,
@@ -369,7 +371,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " ori #$1234,sr",
+      " ori.w #$1234,sr",
       [0x00, 0x7c, 0x12, 0x34],
       {
         size: 2,
@@ -419,7 +421,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " andi #17,ccr",
+      " andi.b #17,ccr",
       [0x02, 0x3c, 0x00, 0x11],
       {
         size: 1,
@@ -429,7 +431,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " andi #$1234,sr",
+      " andi.w #$1234,sr",
       [0x02, 0x7c, 0x12, 0x34],
       {
         size: 2,
@@ -479,7 +481,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " eori #17,ccr",
+      " eori.b #17,ccr",
       [0x0a, 0x3c, 0x00, 0x11],
       {
         size: 1,
@@ -489,7 +491,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " eori #$1234,sr",
+      " eori.w #$1234,sr",
       [0x0a, 0x7c, 0x12, 0x34],
       {
         size: 2,
@@ -2141,7 +2143,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab:\n   bra.s lab",
+      "lab:\n   bra.s lab",
       [0x60, 0xfe],
       {
         size: 1,
@@ -2151,7 +2153,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab:\n   bra.w lab",
+      "lab:\n   bra.w lab",
       [0x60, 0x00, 0xff, 0xfe],
       {
         size: 2,
@@ -2161,7 +2163,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab:\n   bra.l lab",
+      "lab:\n   bra.l lab",
       [0x60, 0xff, 0xff, 0xff, 0xff, 0xfe],
       {
         size: 4,
@@ -2171,7 +2173,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab:\n   bsr.s lab",
+      "lab:\n   bsr.s lab",
       [0x61, 0xfe],
       {
         size: 1,
@@ -2181,7 +2183,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab:\n   bsr.w lab",
+      "lab:\n   bsr.w lab",
       [0x61, 0x00, 0xff, 0xfe],
       {
         size: 2,
@@ -2191,7 +2193,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab:\n   bsr.l lab",
+      "lab:\n   bsr.l lab",
       [0x61, 0xff, 0xff, 0xff, 0xff, 0xfe],
       {
         size: 4,
@@ -2201,7 +2203,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab:\n   bne.s lab",
+      "lab:\n   bne.s lab",
       [0x66, 0xfe],
       {
         size: 1,
@@ -2211,7 +2213,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      "   beq.w lab",
+      "lab:\n   beq.w lab",
       [0x67, 0x00, 0xff, 0xfe],
       {
         size: 2,
@@ -2221,7 +2223,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab:\n   bcs.l lab",
+      "lab:\n   bcs.l lab",
       [0x65, 0xff, 0xff, 0xff, 0xff, 0xfe],
       {
         size: 4,
@@ -3271,7 +3273,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbne.l lab",
+      "lab: fbne.l lab",
       [0xf2, 0xce, 0xff, 0xff, 0xff, 0xfe],
       {
         size: 4,
@@ -3281,7 +3283,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbf.w lab",
+      "lab: fbf.w lab",
       [0xf2, 0x80, 0xff, 0xfe],
       {
         size: 2,
@@ -3291,7 +3293,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbeq.w lab",
+      "lab: fbeq.w lab",
       [0xf2, 0x81, 0xff, 0xfe],
       {
         size: 2,
@@ -3301,7 +3303,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbogt.w lab",
+      "lab: fbogt.w lab",
       [0xf2, 0x82, 0xff, 0xfe],
       {
         size: 2,
@@ -3311,7 +3313,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fboge.w lab",
+      "lab: fboge.w lab",
       [0xf2, 0x83, 0xff, 0xfe],
       {
         size: 2,
@@ -3321,7 +3323,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbolt.w lab",
+      "lab: fbolt.w lab",
       [0xf2, 0x84, 0xff, 0xfe],
       {
         size: 2,
@@ -3331,7 +3333,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbole.w lab",
+      "lab: fbole.w lab",
       [0xf2, 0x85, 0xff, 0xfe],
       {
         size: 2,
@@ -3341,7 +3343,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbogl.w lab",
+      "lab: fbogl.w lab",
       [0xf2, 0x86, 0xff, 0xfe],
       {
         size: 2,
@@ -3351,7 +3353,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbor.w lab",
+      "lab: fbor.w lab",
       [0xf2, 0x87, 0xff, 0xfe],
       {
         size: 2,
@@ -3361,7 +3363,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbun.w lab",
+      "lab: fbun.w lab",
       [0xf2, 0x88, 0xff, 0xfe],
       {
         size: 2,
@@ -3371,7 +3373,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbueq.w lab",
+      "lab: fbueq.w lab",
       [0xf2, 0x89, 0xff, 0xfe],
       {
         size: 2,
@@ -3381,7 +3383,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbugt.w lab",
+      "lab: fbugt.w lab",
       [0xf2, 0x8a, 0xff, 0xfe],
       {
         size: 2,
@@ -3391,7 +3393,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbuge.w lab",
+      "lab: fbuge.w lab",
       [0xf2, 0x8b, 0xff, 0xfe],
       {
         size: 2,
@@ -3401,7 +3403,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbult.w lab",
+      "lab: fbult.w lab",
       [0xf2, 0x8c, 0xff, 0xfe],
       {
         size: 2,
@@ -3411,7 +3413,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbule.w lab",
+      "lab: fbule.w lab",
       [0xf2, 0x8d, 0xff, 0xfe],
       {
         size: 2,
@@ -3421,7 +3423,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbne.w lab",
+      "lab: fbne.w lab",
       [0xf2, 0x8e, 0xff, 0xfe],
       {
         size: 2,
@@ -3431,7 +3433,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbt.w lab",
+      "lab: fbt.w lab",
       [0xf2, 0x8f, 0xff, 0xfe],
       {
         size: 2,
@@ -3441,7 +3443,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbsf.w lab",
+      "lab: fbsf.w lab",
       [0xf2, 0x90, 0xff, 0xfe],
       {
         size: 2,
@@ -3451,7 +3453,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbseq.w lab",
+      "lab: fbseq.w lab",
       [0xf2, 0x91, 0xff, 0xfe],
       {
         size: 2,
@@ -3461,7 +3463,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbgt.w lab",
+      "lab: fbgt.w lab",
       [0xf2, 0x92, 0xff, 0xfe],
       {
         size: 2,
@@ -3471,7 +3473,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbge.w lab",
+      "lab: fbge.w lab",
       [0xf2, 0x93, 0xff, 0xfe],
       {
         size: 2,
@@ -3481,7 +3483,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fblt.w lab",
+      "lab: fblt.w lab",
       [0xf2, 0x94, 0xff, 0xfe],
       {
         size: 2,
@@ -3491,7 +3493,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fble.w lab",
+      "lab: fble.w lab",
       [0xf2, 0x95, 0xff, 0xfe],
       {
         size: 2,
@@ -3501,7 +3503,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbgl.w lab",
+      "lab: fbgl.w lab",
       [0xf2, 0x96, 0xff, 0xfe],
       {
         size: 2,
@@ -3511,7 +3513,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbgle.w lab",
+      "lab: fbgle.w lab",
       [0xf2, 0x97, 0xff, 0xfe],
       {
         size: 2,
@@ -3521,7 +3523,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbngle.w lab",
+      "lab: fbngle.w lab",
       [0xf2, 0x98, 0xff, 0xfe],
       {
         size: 2,
@@ -3531,7 +3533,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbngl.w lab",
+      "lab: fbngl.w lab",
       [0xf2, 0x99, 0xff, 0xfe],
       {
         size: 2,
@@ -3541,7 +3543,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbnle.w lab",
+      "lab: fbnle.w lab",
       [0xf2, 0x9a, 0xff, 0xfe],
       {
         size: 2,
@@ -3551,7 +3553,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbnlt.w lab",
+      "lab: fbnlt.w lab",
       [0xf2, 0x9b, 0xff, 0xfe],
       {
         size: 2,
@@ -3561,7 +3563,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbnge.w lab",
+      "lab: fbnge.w lab",
       [0xf2, 0x9c, 0xff, 0xfe],
       {
         size: 2,
@@ -3571,7 +3573,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbngt.w lab",
+      "lab: fbngt.w lab",
       [0xf2, 0x9d, 0xff, 0xfe],
       {
         size: 2,
@@ -3581,7 +3583,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbsne.w lab",
+      "lab: fbsne.w lab",
       [0xf2, 0x9e, 0xff, 0xfe],
       {
         size: 2,
@@ -3591,7 +3593,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fbst.w lab",
+      "lab: fbst.w lab",
       [0xf2, 0x9f, 0xff, 0xfe],
       {
         size: 2,
@@ -4051,7 +4053,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " lab: fdbgt d6,lab",
+      "lab: fdbgt d6,lab",
       [0xf2, 0x4e, 0x00, 0x12, 0xff, 0xfc],
       {
         size: 2,
@@ -4161,7 +4163,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " fmovem.x fp0-fp4,-(a3)",
+      " fmovem fp0-fp4,-(a3)",
       [0xf2, 0x23, 0xe0, 0x1f],
       {
         size: 10,
@@ -4171,7 +4173,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " fmovem.x d7,-(a3)",
+      " fmovem d7,-(a3)",
       [0xf2, 0x23, 0xe8, 0x70],
       {
         size: 10,
@@ -4181,7 +4183,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " fmovem.x d7,(a3)",
+      " fmovem d7,(a3)",
       [0xf2, 0x13, 0xf8, 0x70],
       {
         size: 10,
@@ -4191,7 +4193,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " fmovem.x (a3),d7",
+      " fmovem (a3),d7",
       [0xf2, 0x13, 0xd8, 0x70],
       {
         size: 10,
@@ -4201,7 +4203,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " fmovem.x (a3)+,d7",
+      " fmovem (a3)+,d7",
       [0xf2, 0x1b, 0xd8, 0x70],
       {
         size: 10,
@@ -4211,7 +4213,7 @@ describe("decodeInstruction", () => {
       },
     ],
     [
-      " fmovem.x (a3)+,fp0/fp6",
+      " fmovem (a3)+,fp0/fp6",
       [0xf2, 0x1b, 0xd0, 0x82],
       {
         size: 10,
@@ -4810,7 +4812,7 @@ describe("decodeInstruction", () => {
         extra: null,
       },
     ],
-  ])("%s", (_name, bytes, expected) => {
+  ])("%s", (src, bytes, expected) => {
     const code = Uint8Array.from(bytes);
     if (expected === "NotImplemented") {
       expect(() => decodeInstruction(code)).toThrowError();
@@ -4818,6 +4820,21 @@ describe("decodeInstruction", () => {
       const decoded = decodeInstruction(code);
       expect(decoded.instruction).toEqual(expected);
       expect(decoded.bytesUsed).toEqual(code.length);
+
+      if (!src.includes("\n") && !src.match(/(lab|self):/)) {
+        const inst = instructionToString(decoded.instruction);
+
+        const normalizedSrc = src
+          .toLowerCase()
+          // Normalize whitespace
+          .replace(/\s+/g, " ")
+          // Hex to decimal
+          .replace(/\$[0-9a-f]+/g, (v) => {
+            return parseInt(v.substring(1), 16).toString();
+          });
+
+        expect(inst).toEqual(normalizedSrc);
+      }
     }
   });
 });
