@@ -29,7 +29,8 @@
     "lint-fix": "eslint . --ext .ts --fix",
     "test": "jest",
     "test-coverage": "jest --coverage",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "generate": "python3 gendecoder.py imask.txt src/decode.ts"
   },
   "license": "MIT",
   "dependencies": {},
