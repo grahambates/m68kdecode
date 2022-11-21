@@ -664,7 +664,7 @@ describe("decodeInstruction", () => {
       " btst #18,d0",
       [0x08, 0x00, 0x00, 0x12],
       {
-        size: 1,
+        size: 4,
         operation: "BTST",
         operands: [IMM16(18), DR(0)],
         extra: null,
@@ -674,7 +674,7 @@ describe("decodeInstruction", () => {
       " btst d0,#18",
       [0x01, 0x3c, 0x00, 0x12],
       {
-        size: 4,
+        size: 1,
         operation: "BTST",
         operands: [DR(0), IMM16(18)],
         extra: null,

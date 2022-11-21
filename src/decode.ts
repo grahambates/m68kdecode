@@ -121,7 +121,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const d = getBits(w0, 9, 3);
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
-    const size = 4;
+    const size = m ? 1 : 4;
     const src = DR(d);
     const dst = cs.ea(r, m, 2);
     const extra = null;
@@ -134,7 +134,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const d = getBits(w0, 9, 3);
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
-    const size = 4;
+    const size = m ? 1 : 4;
     const src = DR(d);
     const dst = cs.ea(r, m, 4);
     const extra = null;
@@ -147,7 +147,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const d = getBits(w0, 9, 3);
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
-    const size = 4;
+    const size = m ? 1 : 4;
     const src = DR(d);
     const dst = cs.ea(r, m, 4);
     const extra = null;
@@ -160,7 +160,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const d = getBits(w0, 9, 3);
     const m = getBits(w0, 3, 3);
     const r = getBits(w0, 0, 3);
-    const size = 4;
+    const size = m ? 1 : 4;
     const src = DR(d);
     const dst = cs.ea(r, m, 4);
     const extra = null;
@@ -176,7 +176,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const r = getBits(w0, 0, 3);
       const n = getBits(w1, 0, 9);
       cs.skipWords(1);
-      const size = 1;
+      const size = m ? 1 : 4;
       const src = IMM16(n);
       const dst = cs.ea(r, m, 1);
       const extra = null;
@@ -193,7 +193,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const r = getBits(w0, 0, 3);
       const n = getBits(w1, 0, 9);
       cs.skipWords(1);
-      const size = 1;
+      const size = m ? 1 : 4;
       const src = IMM16(n);
       const dst = cs.ea(r, m, 1);
       const extra = null;
@@ -210,7 +210,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const r = getBits(w0, 0, 3);
       const n = getBits(w1, 0, 9);
       cs.skipWords(1);
-      const size = 1;
+      const size = m ? 1 : 4;
       const src = IMM16(n);
       const dst = cs.ea(r, m, 1);
       const extra = null;
@@ -227,7 +227,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       const r = getBits(w0, 0, 3);
       const n = getBits(w1, 0, 9);
       cs.skipWords(1);
-      const size = 1;
+      const size = m ? 1 : 4;
       const src = IMM16(n);
       const dst = cs.ea(r, m, 1);
       const extra = null;
