@@ -39,7 +39,6 @@ const singleSize = [
   "MOVEFROMCCR",
   "MOVEFROMSR",
   "MOVEFROMUSP",
-  "MOVEP",
   "MOVEQ",
   "MOVETOCCR",
   "MOVETOSR",

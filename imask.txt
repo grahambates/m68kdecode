@@ -14,8 +14,8 @@ ORITOSR         0000_0000_0111_1100 size=2; src=cs.imm16(); dst=Implied();
 # Note: for movep bits 5-3, specify a mode An, which all the other
 # bit 8 set commands do not, so have check first.
 
-MOVEP           0000_ddd1_0s00_1aaa size=1<<(s+1); src=ARIND(a); dst=DR(d);
-MOVEP           0000_ddd1_0s10_1aaa size=1<<(s+1); src=DR(d); dst=ARIND(a);
+MOVEP           0000_ddd1_0s00_1aaa size=1<<(s+1); src=ARDISP(a, simpleDisp(i16(cs.pull16()))); dst=DR(d);
+MOVEP           0000_ddd1_1s00_1aaa size=1<<(s+1); src=DR(d); dst=ARDISP(a, simpleDisp(i16(cs.pull16())));
 
 BTST            0000_ddd1_00mm_mrrr size=4; src=DR(d); dst=cs.ea(r, m, 2);
 BCHG            0000_ddd1_01mm_mrrr size=4; src=DR(d); dst=cs.ea(r, m, 4);

@@ -4,6 +4,7 @@ import {
   DecodedInstruction,
   Implied,
   ARIND,
+  ARDISP,
   DR,
   IMM16,
   CONTROLREG,
@@ -95,7 +96,7 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
     const s = getBits(w0, 6, 1);
     const a = getBits(w0, 0, 3);
     const size = 1 << (s + 1);
-    const src = ARIND(a);
+    const src = ARDISP(a, simpleDisp(i16(cs.pull16())));
     const dst = DR(d);
     const extra = null;
     return {
@@ -103,13 +104,13 @@ function decodeGroup0000(w0: number, cs: CodeStream): DecodedInstruction {
       instruction: { size, operation: "MOVEP", operands: [src, dst], extra },
     };
   }
-  if ((w0 & 0b1111000110111000) === 0b0000000100101000) {
+  if ((w0 & 0b1111000110111000) === 0b0000000110001000) {
     const d = getBits(w0, 9, 3);
     const s = getBits(w0, 6, 1);
     const a = getBits(w0, 0, 3);
     const size = 1 << (s + 1);
     const src = DR(d);
-    const dst = ARIND(a);
+    const dst = ARDISP(a, simpleDisp(i16(cs.pull16())));
     const extra = null;
     return {
       bytesUsed: cs.pos,

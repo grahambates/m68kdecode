@@ -3033,6 +3033,26 @@ describe("decodeInstruction", () => {
       },
     ],
     [
+      " movep.l 123(a0),d0",
+      [0x01, 0x48, 0x00, 0x7b],
+      {
+        size: 4,
+        operation: "MOVEP",
+        operands: [ARDISP(0, simpleDisp(123)), DR(0)],
+        extra: null,
+      },
+    ],
+    [
+      " movep.l d0,123(a0)",
+      [0x01, 0xc8, 0x00, 0x7b],
+      {
+        size: 4,
+        operation: "MOVEP",
+        operands: [DR(0), ARDISP(0, simpleDisp(123))],
+        extra: null,
+      },
+    ],
+    [
       " fabs fp1",
       [0xf2, 0x00, 0x04, 0x98],
       {

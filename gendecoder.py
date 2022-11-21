@@ -182,6 +182,7 @@ with open(outfile, "w") as of:
     of.write('  DecodedInstruction,')
     of.write('  Implied,')
     of.write('  ARIND,')
+    of.write('  ARDISP,')
     of.write('  DR,')
     of.write('  IMM16,')
     of.write('  CONTROLREG,')
