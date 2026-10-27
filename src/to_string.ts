@@ -269,20 +269,26 @@ function operandToString(op: Operand | null, inst: Instruction): string | null {
       return dispToString(op);
     case "REGLIST":
       return inst.operation === "FMOVEM"
-        ? floatRegListToString(op, inst.operands.indexOf(op) === 0)
-        : regListToString(op, inst.operands.indexOf(op) === 0);
+        ? floatRegListToString(op, isPredecrement(inst))
+        : regListToString(op, isPredecrement(inst));
   }
   return null;
 }
 
-function regListToString(op: Operand, source: boolean) {
+// The register mask order depends on the addressing mode, not on the
+// direction: only the predecrement form stores it reversed.
+function isPredecrement(inst: Instruction): boolean {
+  return inst.operands.some((op) => op?.kind === "ARDEC");
+}
+
+function regListToString(op: Operand, predecrement: boolean) {
   if (op.kind !== "REGLIST") {
     throw new Error("Not a reglist operand");
   }
   const dRegs: number[] = [];
   const aRegs: number[] = [];
-  // Order of bits is reversed for source register
-  const mask = source ? reverseBits(op.bitmask) : op.bitmask;
+  // Bit 0 is d0 and bit 15 a7, except for -(An), where bit 15 is d0 and bit 0 a7
+  const mask = predecrement ? reverseBits(op.bitmask, 16) : op.bitmask;
   for (let i = 0; i < 8; i++) {
     if (mask & (1 << i)) {
       dRegs.push(i);
@@ -294,12 +300,14 @@ function regListToString(op: Operand, source: boolean) {
   return [...groupRegs(dRegs, "d"), ...groupRegs(aRegs, "a")].join("/");
 }
 
-function floatRegListToString(op: Operand, source: boolean) {
+function floatRegListToString(op: Operand, predecrement: boolean) {
   if (op.kind !== "REGLIST") {
     throw new Error("Not a reglist operand");
   }
   const regs: number[] = [];
-  const mask = source ? op.bitmask : reverseBits(op.bitmask);
+  // The opposite of MOVEM: bit 7 is fp0 and bit 0 fp7, except for -(An), where
+  // bit 0 is fp0 and bit 7 fp7
+  const mask = predecrement ? op.bitmask & 0xff : reverseBits(op.bitmask, 8);
   for (let i = 0; i < 8; i++) {
     if (mask & (1 << i)) {
       regs.push(i);
@@ -329,9 +337,15 @@ function groupRegs(regs: number[], t: string): string[] {
   return outStrs;
 }
 
-function reverseBits(num: number): number {
-  const reversed = num.toString(2).padStart(16);
-  return parseInt(reversed.split("").reverse().join(""), 2);
+// Reverses the low `width` bits of `num`
+function reverseBits(num: number, width: number): number {
+  let reversed = 0;
+  for (let i = 0; i < width; i++) {
+    if (num & (1 << i)) {
+      reversed |= 1 << (width - 1 - i);
+    }
+  }
+  return reversed;
 }
 
 function dispToString(op: Operand) {
@@ -341,7 +355,9 @@ function dispToString(op: Operand) {
   let r: string;
   let out = "";
   const args: string[] = [];
-  if (op.disp.baseDisplacement) {
+  // A zero displacement is still written for d16(An) and d16(pc): (An) is a
+  // different, shorter encoding, and (pc) is not valid syntax.
+  if (op.disp.baseDisplacement || (!op.disp.indexer && !op.disp.indirection)) {
     out += op.disp.baseDisplacement;
   }
   if (op.kind === "ARDISP") {

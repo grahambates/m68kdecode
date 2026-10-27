@@ -1242,6 +1242,69 @@ describe("decodeInstruction", () => {
         extra: null,
       },
     ],
+    // Register masks without bit 15 set, and stores to modes other than -(An),
+    // where the mask is not reversed. Bytes from vasm.
+    [
+      " movem.l d6-d7/a0/a2-a3,-(a7)",
+      [0x48, 0xe7, 0x03, 0xb0],
+      {
+        size: 4,
+        operation: "MOVEM",
+        operands: [REGLIST(0x03b0), ARDEC(7)],
+        extra: null,
+      },
+    ],
+    [
+      " movem.l a7,-(a7)",
+      [0x48, 0xe7, 0x00, 0x01],
+      {
+        size: 4,
+        operation: "MOVEM",
+        operands: [REGLIST(0x0001), ARDEC(7)],
+        extra: null,
+      },
+    ],
+    [
+      " movem.l d0-d2/a6,(a0)",
+      [0x48, 0xd0, 0x40, 0x07],
+      {
+        size: 4,
+        operation: "MOVEM",
+        operands: [REGLIST(0x4007), ARIND(0)],
+        extra: null,
+      },
+    ],
+    [
+      " movem.l d3/a1,4(a0)",
+      [0x48, 0xe8, 0x02, 0x08, 0x00, 0x04],
+      {
+        size: 4,
+        operation: "MOVEM",
+        operands: [REGLIST(0x0208), ARDISP(0, simpleDisp(4))],
+        extra: null,
+      },
+    ],
+    // A zero displacement is a different encoding from (An), and costs more
+    [
+      " move.b 0(a3),-(a2)",
+      [0x15, 0x2b, 0x00, 0x00],
+      {
+        size: 1,
+        operation: "MOVE",
+        operands: [ARDISP(3, simpleDisp(0)), ARDEC(2)],
+        extra: null,
+      },
+    ],
+    [
+      " move.w 0(pc),d1",
+      [0x32, 0x3a, 0x00, 0x00],
+      {
+        size: 2,
+        operation: "MOVE",
+        operands: [PCDISP(2, simpleDisp(0)), DR(1)],
+        extra: null,
+      },
+    ],
     [
       " clr.b d0",
       [0x42, 0x00],
@@ -4199,6 +4262,37 @@ describe("decodeInstruction", () => {
         size: 10,
         operation: "FMOVEM",
         operands: [REGLIST(0b11111), ARDEC(3)],
+        extra: FloatFormat(FPF_EXTENDED_REAL()),
+      },
+    ],
+    // Outside -(An), bit 7 is fp0. Bytes from vasm.
+    [
+      " fmovem fp0,(a3)",
+      [0xf2, 0x13, 0xf0, 0x80],
+      {
+        size: 10,
+        operation: "FMOVEM",
+        operands: [REGLIST(0x80), ARIND(3)],
+        extra: FloatFormat(FPF_EXTENDED_REAL()),
+      },
+    ],
+    [
+      " fmovem (a3)+,fp1/fp6",
+      [0xf2, 0x1b, 0xd0, 0x42],
+      {
+        size: 10,
+        operation: "FMOVEM",
+        operands: [ARINC(3), REGLIST(0x42)],
+        extra: FloatFormat(FPF_EXTENDED_REAL()),
+      },
+    ],
+    [
+      " fmovem (a3),fp7",
+      [0xf2, 0x13, 0xd0, 0x01],
+      {
+        size: 10,
+        operation: "FMOVEM",
+        operands: [ARIND(3), REGLIST(0x01)],
         extra: FloatFormat(FPF_EXTENDED_REAL()),
       },
     ],
